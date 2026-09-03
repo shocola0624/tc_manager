@@ -1,0 +1,49 @@
+.fields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.fields label {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  margin-top: 0;
+  font-weight: 600;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.hint {
+  font-size: 12px;
+  color: var(--muted);
+  margin: 0;
+}
+
+.circleOption {
+  flex-direction: row !important;
+  align-items: center;
+  gap: var(--space-2) !important;
+}
+
+.footer {
+  display: flex;
+  gap: var(--space-3);
+  margin-top: var(--space-6);
+}
+
+.footer > button {
+  flex: 1;
+}
+
+.deleteRow {
+  margin-top: var(--space-5);
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--line);
+}
+
+.error {
+  color: var(--warn);
+  font-size: 12px;
+  margin-top: var(--space-3);
+}

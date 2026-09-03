@@ -1,0 +1,324 @@
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  padding: var(--space-6);
+}
+
+/* --- 上部ブロック(日時・タイトル・場所、箱なし) --- */
+.headerBlock {
+  padding-top: var(--space-2);
+}
+
+.dateTime {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.title {
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 1.3;
+  margin: var(--space-2) 0 0;
+}
+
+.location {
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: var(--space-2);
+}
+
+/* --- 出欠集計 + あなたの回答状況(箱なし、上下罫線) --- */
+.tallyRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-5) 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.tallyGroup {
+  display: flex;
+  gap: var(--space-6);
+}
+
+.tallyItem {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.tallyItem b {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: var(--ink);
+  margin-left: var(--space-1);
+}
+
+.tallyAttending {
+  color: var(--positive) !important;
+}
+
+.statusBadge {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex: none;
+}
+
+.dotWarn {
+  background: var(--warn);
+}
+
+.dotPositive {
+  background: var(--positive);
+}
+
+.dotMuted {
+  background: var(--muted);
+}
+
+.statusText {
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--ink);
+}
+
+.rsvpActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+}
+
+/* --- 器具の準備状況カード --- */
+.readinessHeaderRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.readinessTitle {
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.unassignedCount {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 11px;
+  color: var(--warn);
+}
+
+.categoryCounts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+}
+
+.categoryCountBadge {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink);
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-button);
+  padding: 2px var(--space-2);
+}
+
+.itemRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  border-left: 3px solid var(--positive);
+  padding: var(--space-2) 0 var(--space-2) var(--space-4);
+  margin-top: var(--space-4);
+}
+
+.itemRowAssigned {
+  border-left-color: var(--accent);
+}
+
+.itemInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.itemName {
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.itemMeta {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.itemNote {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.unassignedDivider {
+  font-weight: 600;
+  font-size: 11px;
+  color: var(--muted);
+  border-top: 1px solid var(--line);
+  padding-top: var(--space-4);
+  margin-top: var(--space-5);
+}
+
+.unassignedRow {
+  composes: itemRow;
+  border-left-color: var(--warn);
+  background: var(--warn-bg);
+  border-radius: 0 var(--radius-button) var(--radius-button) 0;
+}
+
+.unassignedNote {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--warn);
+}
+
+.addItemButtonRow {
+  margin-top: var(--space-6);
+}
+
+/* --- 箱なしセクション(予算など) --- */
+.section {
+  border-top: 1px solid var(--line);
+  padding-top: var(--space-5);
+}
+
+.sectionHeaderRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: var(--space-4);
+}
+
+.sectionTitle {
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.budgetTotal {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--ink);
+}
+
+.budgetRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  font-size: 13px;
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.budgetRowRight {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.budgetAmount {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--ink);
+}
+
+.budgetForm {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-top: var(--space-6);
+}
+
+.budgetForm input {
+  flex: 1;
+  min-width: 90px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-button);
+  padding: var(--space-2) var(--space-3);
+  font-size: 13px;
+  color: var(--ink);
+}
+
+/* --- details --- */
+.details {
+  border-top: 1px solid var(--line);
+  padding-top: var(--space-5);
+}
+
+.detailsSummary {
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.attendeesList {
+  margin: var(--space-4) 0 0;
+  font-size: 13px;
+  line-height: 1.8;
+}
+
+.fieldList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  margin-top: var(--space-4);
+}
+
+.fieldLabel {
+  display: block;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.fieldValue {
+  font-size: 13px;
+  line-height: 1.7;
+  margin: 2px 0 0;
+  white-space: pre-wrap;
+}
+
+/* --- 管理セクション(admin/officer、デザイン対象外の追加機能) --- */
+.manageSection {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+}

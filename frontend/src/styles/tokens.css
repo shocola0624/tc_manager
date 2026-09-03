@@ -1,0 +1,56 @@
+/* screen-reference.dc.html の「Design Tokens（1a 計器盤）」をそのまま反映する。
+   コーヒーの「カフェ風」装飾ではなく、器具・出欠という数値で確定する情報を
+   計器のように読める構造(罫線・等幅フォントの数字・最小限の角丸/影なし)で支える。
+   警告色(--warn)は「未割り当ての器具」にのみ使う。 */
+:root {
+  --bg: oklch(98% 0.002 250);
+  --surface: #ffffff;
+  --ink: oklch(20% 0.01 260);
+  --muted: oklch(52% 0.01 260);
+  --line: oklch(88% 0.006 260);
+  --accent: oklch(50% 0.16 255);
+  --accent-ink: #ffffff;
+  --warn: oklch(58% 0.16 45);
+  --warn-bg: oklch(58% 0.16 45 / 0.08);
+  --positive: oklch(50% 0.11 150);
+  /* 持ち物の「登録」のような単発の勧誘アクション専用のCTA色(screen-reference.dc(1).html)。
+     日常的な操作(--accent)と混同しないよう別トークンにする。 */
+  --cta: oklch(62% 0.19 40);
+  --cta-ink: #ffffff;
+
+  --font-sans: "IBM Plex Sans JP", system-ui, -apple-system, "Hiragino Kaku Gothic ProN", "Yu Gothic",
+    sans-serif;
+  --font-mono: "Roboto Mono", ui-monospace, "SF Mono", monospace;
+
+  --radius-card: 10px;
+  --radius-button: 6px;
+  --radius-icon: 4px;
+  --radius-pill: 9px;
+
+  --space-1: 6px;
+  --space-2: 8px;
+  --space-3: 10px;
+  --space-4: 12px;
+  --space-5: 14px;
+  --space-6: 16px;
+  --space-7: 18px;
+  --space-8: 20px;
+  --space-9: 24px;
+
+  /* PCなど広い画面でもモバイル幅(390px)に固定されて窮屈にならないよう、
+     ヘッダー・タブバー・本文が共通で参照する「コンテンツ幅」を画面幅ごとに広げる。
+     カード型のUIが間延びしないよう、フルブリードのダッシュボードにはしない。 */
+  --content-max-width: 390px;
+}
+
+@media (min-width: 640px) {
+  :root {
+    --content-max-width: 520px;
+  }
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --content-max-width: 680px;
+  }
+}

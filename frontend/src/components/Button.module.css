@@ -1,0 +1,46 @@
+.button {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: var(--radius-button);
+  padding: var(--space-3) var(--space-5);
+  cursor: pointer;
+  border: 1px solid transparent;
+  line-height: 1.4;
+}
+
+.button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.primary {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+.secondary {
+  background: transparent;
+  border-color: var(--line);
+  color: var(--muted);
+}
+
+.warn {
+  background: var(--warn);
+  color: #ffffff;
+}
+
+.cta {
+  background: var(--cta);
+  color: var(--cta-ink);
+}
+
+.text {
+  background: transparent;
+  border-color: transparent;
+  color: var(--muted);
+  padding: var(--space-1) var(--space-2);
+  font-weight: 600;
+  font-size: 11px;
+  text-decoration: underline;
+}

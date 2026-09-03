@@ -1,0 +1,75 @@
+@import "./styles/tokens.css";
+
+:root {
+  font-family: var(--font-sans);
+  line-height: 1.5;
+  color-scheme: light;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--ink);
+}
+
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+  font-size: 13px;
+}
+
+/* デザイン未規定の画面(フォーム・持ち物一覧など)向けの汎用ベーススタイル。
+   components/Button.tsx を使う箇所はクラスの詳細度で上書きされる。 */
+button {
+  border-radius: var(--radius-button);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink);
+  padding: var(--space-3) var(--space-5);
+  cursor: pointer;
+}
+
+input,
+select,
+textarea {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-button);
+  padding: var(--space-2) var(--space-3);
+  color: var(--ink);
+}
+
+a {
+  color: var(--accent);
+}
+
+h1 {
+  font-size: 18px;
+}
+
+label {
+  display: block;
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: var(--space-4);
+}
+
+form {
+  margin-top: var(--space-4);
+}
+
+main {
+  max-width: var(--content-max-width);
+  margin: 0 auto;
+  padding: var(--space-6);
+}
+
+/* screen-reference.dc.html は幅390pxのモバイル1カラムを基準にしているが、
+   --content-max-width(styles/tokens.css)は画面幅に応じて広がるため、PCでは
+   ヘッダー・タブバー・本文の幅が揃ったまま少し余裕を持って表示される。 */

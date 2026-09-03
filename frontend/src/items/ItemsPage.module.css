@@ -1,0 +1,243 @@
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* --- ツールバー(カテゴリーのチップ + 登録ボタン) --- */
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-top: var(--space-4);
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.chip {
+  padding: 6px 12px;
+  border-radius: var(--radius-button);
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--muted);
+  font-weight: 600;
+  font-size: 12px;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.chipActive {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: #ffffff;
+}
+
+.addDesktop {
+  display: none;
+}
+
+.addMobile {
+  display: block;
+  width: 100%;
+  margin-top: var(--space-6);
+}
+
+/* --- 凡例 + 保管場所/所有者フィルター --- */
+.legendRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-top: var(--space-5);
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.legendItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.swatch {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  display: inline-block;
+}
+
+.swatchMine {
+  background: var(--accent);
+}
+
+.swatchOther {
+  background: var(--muted);
+}
+
+.swatchClubroom {
+  background: var(--positive);
+}
+
+.secondaryFilters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.secondaryFilters select {
+  font-size: 12px;
+  padding: var(--space-1) var(--space-2);
+}
+
+/* --- テーブルヘッダー(PC幅のみ) --- */
+.tableHeader {
+  display: none;
+}
+
+/* --- 一覧 --- */
+.list {
+  list-style: none;
+  margin: var(--space-6) 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 4px 1fr auto;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-4) 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.bar {
+  width: 4px;
+  height: 32px;
+  border-radius: 2px;
+}
+
+.barMine {
+  background: var(--accent);
+}
+
+.barOther {
+  background: var(--muted);
+}
+
+.barClubroom {
+  background: var(--positive);
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.name {
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.metaCombined {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.categoryCol,
+.ownerCol {
+  display: none;
+}
+
+.editLink {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--muted);
+  font-weight: 600;
+  font-size: 12px;
+  padding: 0;
+  white-space: nowrap;
+}
+
+.empty {
+  color: var(--muted);
+  font-size: 13px;
+  margin-top: var(--space-6);
+}
+
+/* --- タブレット幅: 登録ボタンを上へ、一覧を2列に --- */
+@media (min-width: 640px) {
+  .addDesktop {
+    display: inline-flex;
+  }
+
+  .addMobile {
+    display: none;
+  }
+
+  .list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 var(--space-8);
+  }
+}
+
+/* --- PC幅: 表形式に近づける --- */
+@media (min-width: 1024px) {
+  .tableHeader {
+    display: grid;
+    grid-template-columns: 3px 1.6fr 1fr 1fr 60px;
+    gap: var(--space-4);
+    padding-bottom: var(--space-3);
+    margin-top: var(--space-6);
+    border-bottom: 1px solid var(--line);
+    font-weight: 600;
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .list {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .row {
+    grid-template-columns: 3px 1.6fr 1fr 1fr 60px;
+  }
+
+  .metaCombined {
+    display: none;
+  }
+
+  .categoryCol,
+  .ownerCol {
+    display: block;
+    font-size: 13px;
+    color: var(--muted);
+  }
+}

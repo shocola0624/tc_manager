@@ -1,0 +1,152 @@
+/* 写真を「絶対配置で本文に重ねる」のではなく、高さを持つ独立の帯として通常フローに置く。
+   こうすることで下の要素(カード・アイコン)は常にこの帯の“実際の高さ”の外側から始まり、
+   画面幅や文字量が変わっても重なりようがない(--content-max-width が変わっても
+   aspect-ratio で帯の高さも追従するため、余白の帳尻合わせが要らない)。 */
+.hero {
+  aspect-ratio: 2.6 / 1;
+  margin: calc(-1 * var(--space-6)) calc(-1 * var(--space-6)) var(--space-6);
+  border-radius: 0 0 var(--radius-card) var(--radius-card);
+  background-image: linear-gradient(180deg, rgba(0, 0, 0, 0) 55%, var(--bg) 100%),
+    url("../assets/hand-drip.jpg");
+  background-size: cover;
+  background-position: center 30%;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  padding: var(--space-6);
+}
+
+.cardHeaderRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.cardLabel {
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.dateTime {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--ink);
+}
+
+.location {
+  text-align: right;
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: var(--space-2);
+}
+
+.title {
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 1.4;
+  margin: var(--space-4) 0 0;
+}
+
+.titleLink {
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.description {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--muted);
+  margin: var(--space-2) 0 0;
+}
+
+.statusRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-6);
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex: none;
+}
+
+.dotWarn {
+  background: var(--warn);
+}
+
+.dotPositive {
+  background: var(--positive);
+}
+
+.dotMuted {
+  background: var(--muted);
+}
+
+.statusText {
+  font-size: 12px;
+  color: var(--ink);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+}
+
+.itemRow {
+  display: flex;
+  border-left: 3px solid var(--accent);
+  padding-left: var(--space-4);
+  margin-top: var(--space-4);
+  font-size: 13px;
+  color: var(--ink);
+}
+
+.empty {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.navTiles {
+  display: flex;
+  gap: var(--space-4);
+  margin-top: var(--space-6);
+}
+
+/* 画面幅が広がっても大きくなりすぎないよう、行に対して伸縮させず固定サイズにする
+   (以前は flex:1 + aspect-ratio で、コンテンツ幅が広い画面ほど正方形が巨大化していた)。 */
+.navTile {
+  flex: none;
+  width: 76px;
+  height: 76px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  text-decoration: none;
+  color: var(--ink);
+}
+
+.navTileIcon {
+  width: 24px;
+  height: 24px;
+  color: var(--accent);
+}
+
+.navTileLabel {
+  font-size: 11px;
+  font-weight: 600;
+}
