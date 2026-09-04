@@ -10,8 +10,10 @@ from auth.discord_client import DiscordBotClient, DiscordOAuthError
 from discord_bot.announce import announce_activity
 from discord_bot.confirm_announce import confirm_activity
 from discord_bot.write_log import log_write
+from envelope import InvalidRowOut, ListResponse
 from errors import AppError
 from repositories import (
+    get_activities_current_window_repository,
     get_activities_repository,
     get_assignments_repository,
     get_budget_items_repository,
@@ -19,7 +21,7 @@ from repositories import (
     get_users_repository,
 )
 from sheets.parsing import parse_records
-from sheets.repository import SheetRepository
+from sheets.repository import SheetRepository, ViewBackedRepository
 from sheets.schemas import Activity, Role, User
 
 from ._common import make_list_router
@@ -33,6 +35,20 @@ router = make_list_router(
 )
 
 _can_manage_activities = require_role(Role.ADMIN, Role.OFFICER)
+
+
+@router.get("/current-window", response_model=ListResponse[Activity])
+async def list_current_window_activities(
+    repo: ViewBackedRepository = Depends(get_activities_current_window_repository),
+) -> ListResponse[Activity]:
+    """直近(過去1週間〜今後)の活動のみを返す軽量版一覧(CLAUDE.md §4・§9)。ホーム画面など
+    「次の活動」だけが必要な画面向け。過去の活動を広く見る操作(活動一覧の「過去」タブ等)
+    には使わず、常に全件を返す GET /api/activities を使うこと。"""
+    result = parse_records(repo.read_all(), Activity)
+    return ListResponse(
+        data=result.valid,
+        invalid_rows=[InvalidRowOut.from_invalid_row(row) for row in result.invalid],
+    )
 
 
 def _generate_activity_id() -> str:

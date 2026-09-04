@@ -39,8 +39,20 @@ export function useActivities() {
   return useQuery({ queryKey: ["activities"], queryFn: activitiesApi.list });
 }
 
+// ホーム画面向けの軽量版(CLAUDE.md §9)。["activities"] を接頭辞に持つため、
+// 通常の useActivities() 用の invalidateQueries(["activities"]) でまとめて再検証される
+// (useAssignmentCandidates 等と同じ命名規約)。
+export function useCurrentWindowActivities() {
+  return useQuery({ queryKey: ["activities", "current-window"], queryFn: activitiesApi.currentWindow });
+}
+
 export function useAttendance() {
   return useQuery({ queryKey: ["attendance"], queryFn: attendanceApi.list });
+}
+
+// useCurrentWindowActivities() と同じ位置づけ(CLAUDE.md §9)。
+export function useCurrentWindowAttendance() {
+  return useQuery({ queryKey: ["attendance", "current-window"], queryFn: attendanceApi.currentWindow });
 }
 
 export function useAssignmentLog() {

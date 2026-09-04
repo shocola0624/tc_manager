@@ -1,11 +1,14 @@
 from __future__ import annotations
 
+import logging
 from collections.abc import Mapping, Sequence
 from typing import NoReturn
 
 from .client import SheetsClient
 from .columns import build_column_index, record_to_row, row_to_record
 from .exceptions import DuplicateKeyError, RowNotFoundError
+
+logger = logging.getLogger(__name__)
 
 
 class SheetRepository:
@@ -103,3 +106,32 @@ class AppendOnlyRepository(SheetRepository):
 
     def upsert_by_keys(self, *args: object, **kwargs: object) -> NoReturn:
         raise NotImplementedError("assignments シートは追記専用です")
+
+
+class ViewBackedRepository:
+    """パフォーマンス最適化用の読み取り専用ビュー(CLAUDE.md §4・§9)から読み、
+    失敗時は必ず元のシートへフォールバックする。
+
+    ビューは Sheets 側の FILTER 数式が生成する派生データであり正ではない。壊れていても
+    空でも存在しなくてもアプリは動作しなければならない、という §9 の原則をこのクラス1つに
+    集約する。書き込みメソッドは意図的に持たない — 書き込みは常に元のシートの
+    SheetRepository を直接使うこと。
+    """
+
+    def __init__(self, client: SheetsClient, *, source_sheet_name: str, view_sheet_name: str) -> None:
+        self._source = SheetRepository(client, source_sheet_name)
+        self._view = SheetRepository(client, view_sheet_name)
+        self._view_sheet_name = view_sheet_name
+
+    def read_all(self) -> list[dict[str, str]]:
+        try:
+            rows = self._view.read_all()
+        except Exception:
+            logger.warning("view sheet %s is unreadable; falling back to source sheet", self._view_sheet_name)
+            return self._source.read_all()
+        if not rows:
+            # 空は「本当に該当データが0件」と「ビューが壊れている/未セットアップ」を
+            # 区別できないため、安全側(フルスキャン)に倒す。性能改善は保証ではなく
+            # あくまでキャッシュとしての最適化(§9)。
+            return self._source.read_all()
+        return rows

@@ -44,6 +44,9 @@ export const itemsApi = {
 
 export const activitiesApi = {
   list: () => apiClient.get<ListResponse<Activity>>("/api/activities"),
+  // ホーム画面など「直近の活動」だけが必要な画面向けの軽量版(CLAUDE.md §9)。
+  // 過去の活動一覧など全件が必要な場合は list() を使うこと。
+  currentWindow: () => apiClient.get<ListResponse<Activity>>("/api/activities/current-window"),
   create: (payload: ActivityCreateRequest) =>
     apiClient.post<Activity>("/api/activities", payload),
   update: (activityId: string, payload: ActivityUpdateRequest) =>
@@ -58,6 +61,8 @@ export const activitiesApi = {
 
 export const attendanceApi = {
   list: () => apiClient.get<ListResponse<Attendance>>("/api/attendance"),
+  // activitiesApi.currentWindow() と同じ位置づけ(CLAUDE.md §9)。
+  currentWindow: () => apiClient.get<ListResponse<Attendance>>("/api/attendance/current-window"),
   setMine: (activityId: string, status: AttendanceStatus) =>
     apiClient.put<Attendance>(`/api/attendance/${encodeURIComponent(activityId)}`, {
       status,

@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import {
-  useActivities,
-  useAttendance,
   useCurrentAssignments,
+  useCurrentWindowActivities,
+  useCurrentWindowAttendance,
   useItems,
   useSetAttendance,
 } from "../api/hooks";
@@ -65,8 +65,9 @@ function NavTiles() {
 export function HomePage() {
   const { t, formatDateTime } = useI18n();
   const { user } = useAuth();
-  const activitiesQuery = useActivities();
-  const attendanceQuery = useAttendance();
+  // 直近の活動1件しか使わないため、全件取得ではなく軽量版(CLAUDE.md §9)を使う。
+  const activitiesQuery = useCurrentWindowActivities();
+  const attendanceQuery = useCurrentWindowAttendance();
   const assignmentsQuery = useCurrentAssignments();
   const itemsQuery = useItems();
   const setAttendance = useSetAttendance();

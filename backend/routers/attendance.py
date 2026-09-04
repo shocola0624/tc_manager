@@ -5,13 +5,16 @@ from auth.config import AuthSettings
 from auth.dependencies import get_auth_settings, get_bot_client, get_current_user
 from auth.discord_client import DiscordBotClient
 from discord_bot.notifications import notify_absent_user_if_still_assigned
+from envelope import InvalidRowOut, ListResponse
 from repositories import (
     get_activities_repository,
     get_assignments_repository,
+    get_attendance_current_window_repository,
     get_attendance_repository,
     get_items_repository,
 )
-from sheets.repository import SheetRepository
+from sheets.parsing import parse_records
+from sheets.repository import SheetRepository, ViewBackedRepository
 from sheets.schemas import Attendance, AttendanceStatus, User
 
 from ._common import make_list_router
@@ -23,6 +26,20 @@ router = make_list_router(
     model=Attendance,
     get_repository=get_attendance_repository,
 )
+
+
+@router.get("/current-window", response_model=ListResponse[Attendance])
+async def list_current_window_attendance(
+    repo: ViewBackedRepository = Depends(get_attendance_current_window_repository),
+) -> ListResponse[Attendance]:
+    """直近(過去1週間〜今後)の活動に紐づく出欠のみを返す軽量版一覧(CLAUDE.md §4・§9)。
+    ホーム画面など「次の活動」だけが必要な画面向け。全件が必要な場合は GET /api/attendance
+    を使うこと。"""
+    result = parse_records(repo.read_all(), Attendance)
+    return ListResponse(
+        data=result.valid,
+        invalid_rows=[InvalidRowOut.from_invalid_row(row) for row in result.invalid],
+    )
 
 
 @router.put("/{activity_id}", response_model=Attendance)

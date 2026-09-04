@@ -76,3 +76,20 @@ class SheetsClient:
             spreadsheetId=self._spreadsheet_id,
             body={"requests": [{"addSheet": {"properties": {"title": sheet_name}}}]},
         ).execute()
+
+    def list_sheet_titles(self) -> list[str]:
+        """既存のシートタブ名一覧を返す。create_sheet 同様、初期セットアップ向け。"""
+        response = self._service.spreadsheets().get(spreadsheetId=self._spreadsheet_id).execute()
+        return [sheet["properties"]["title"] for sheet in response.get("sheets", [])]
+
+    def set_formula(self, sheet_name: str, cell: str, formula: str) -> None:
+        """指定セルに数式を設定する(valueInputOption=USER_ENTERED)。CLAUDE.md §9 の
+        読み取り専用ビュー(FILTER数式シート)のセットアップ専用。append_row/update_row は
+        valueInputOption=RAW で数式を文字列として書き込んでしまうため使えない。
+        create_sheet 同様、初期セットアップ向けで通常のリクエストパスからは呼ばない。"""
+        self._service.spreadsheets().values().update(
+            spreadsheetId=self._spreadsheet_id,
+            range=f"{_quote_sheet_name(sheet_name)}!{cell}",
+            valueInputOption="USER_ENTERED",
+            body={"values": [[formula]]},
+        ).execute()

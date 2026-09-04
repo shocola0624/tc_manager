@@ -29,6 +29,16 @@ cp .env.example .env
 
 サービスアカウントを作成したら、対象スプレッドシートをそのサービスアカウントのメールアドレス(`xxx@xxx.iam.gserviceaccount.com`)に編集者として共有すること。
 
+### 読み取り専用ビューのセットアップ(パフォーマンス最適化)
+
+ホーム画面など「直近の活動」だけが必要な画面は、スプレッドシート内に `FILTER` 数式で用意した読み取り専用ビュー(`view_activities_current` / `view_attendance_current` / `view_assignments_current`)から読む(CLAUDE.md §4・§9)。`.env` を設定したら一度だけ実行すること(既に存在する場合はヘッダー・数式を上書きするだけなので、列を増やしたときの再実行も安全)。
+
+```bash
+python scripts/setup_read_views.py
+```
+
+ビューが読めない・空の場合は自動的に元のシート全体へフォールバックするため、このスクリプトを実行し忘れてもアプリは動く(ただし最適化は効かない)。
+
 ### Discord OAuth2 / Bot
 
 1. [Discord Developer Portal](https://discord.com/developers/applications) で新規アプリケーションを作成する
@@ -130,3 +140,10 @@ ngrok http 8000
 | `POST /api/activities/{activity_id}/announce` | admin/officer | Discordチャンネルへアナウンスを投稿し、出欠ボタンを付与。`announce_message_id` を保存 |
 | `PUT /api/attendance/{activity_id}` | 全 is_active ユーザー(本人分のみ) | 自分の出欠を登録・更新する |
 | `POST /discord/interactions` | Discord 署名(Ed25519) | Discord Interactions の受け口。PING応答、出欠ボタン押下の deferred ack + follow-up |
+
+### 読み取り最適化(CLAUDE.md §9)
+
+| メソッド/パス | 認可 | 概要 |
+|---|---|---|
+| `GET /api/activities/current-window` | 要ログイン | 直近(過去1週間〜今後)の活動のみを返す軽量版。ホーム画面向け。過去の活動一覧には `GET /api/activities` を使うこと |
+| `GET /api/attendance/current-window` | 要ログイン | 上記の活動に紐づく出欠のみを返す軽量版 |

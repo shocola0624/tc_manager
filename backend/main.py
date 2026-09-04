@@ -37,6 +37,7 @@ def create_app() -> FastAPI:
             app.state.bot_client = DiscordBotClient(auth_settings, http_client)
 
             sheets_client = SheetsClient.from_settings(sheets_settings)
+            app.state.sheets_client = sheets_client
             app.state.users_repo = SheetRepository(sheets_client, "users")
             app.state.items_repo = SheetRepository(sheets_client, "items")
             app.state.activities_repo = SheetRepository(sheets_client, "activities")
