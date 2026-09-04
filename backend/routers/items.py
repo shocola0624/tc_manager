@@ -4,7 +4,10 @@ import secrets
 
 from fastapi import Depends
 
-from auth.dependencies import get_current_user
+from auth.config import AuthSettings
+from auth.dependencies import get_auth_settings, get_bot_client, get_current_user
+from auth.discord_client import DiscordBotClient
+from discord_bot.write_log import log_write
 from errors import AppError
 from repositories import get_items_repository
 from sheets.parsing import parse_records
@@ -37,6 +40,8 @@ async def create_item(
     payload: ItemCreateRequest,
     user: User = Depends(get_current_user),
     items_repo: SheetRepository = Depends(get_items_repository),
+    bot_client: DiscordBotClient = Depends(get_bot_client),
+    settings: AuthSettings = Depends(get_auth_settings),
 ) -> Item:
     owner_id = payload.owner_id or user.discord_user_id
     if not can_set_owner(owner_id, user):
@@ -52,17 +57,25 @@ async def create_item(
         note=payload.note,
         is_active=True,
     )
-    items_repo.append(
-        {
-            "item_id": item.item_id,
-            "owner_id": item.owner_id,
-            "name": item.name,
-            "maker": item.maker,
-            "category": item.category.value,
-            "storage": item.storage.value,
-            "note": item.note,
-            "is_active": "TRUE",
-        }
+    record = {
+        "item_id": item.item_id,
+        "owner_id": item.owner_id,
+        "name": item.name,
+        "maker": item.maker,
+        "category": item.category.value,
+        "storage": item.storage.value,
+        "note": item.note,
+        "is_active": "TRUE",
+    }
+    await log_write(
+        lambda: items_repo.append(record),
+        bot_client=bot_client,
+        channel_id=settings.discord_log_channel_id,
+        actor_name=user.name,
+        actor_id=user.discord_user_id,
+        sheet_name="items",
+        operation="append",
+        record=record,
     )
     return item
 
@@ -73,6 +86,8 @@ async def update_item(
     payload: ItemUpdateRequest,
     user: User = Depends(get_current_user),
     items_repo: SheetRepository = Depends(get_items_repository),
+    bot_client: DiscordBotClient = Depends(get_bot_client),
+    settings: AuthSettings = Depends(get_auth_settings),
 ) -> Item:
     item = _find_item_or_404(items_repo, item_id)
     if not can_edit_item(item, user):
@@ -81,16 +96,22 @@ async def update_item(
     updates = payload.model_dump(exclude_unset=True)
     updated = item.model_copy(update=updates)
 
-    items_repo.update_by_key(
-        "item_id",
-        item_id,
-        {
-            "name": updated.name,
-            "maker": updated.maker,
-            "category": updated.category.value,
-            "storage": updated.storage.value,
-            "note": updated.note,
-        },
+    record = {
+        "name": updated.name,
+        "maker": updated.maker,
+        "category": updated.category.value,
+        "storage": updated.storage.value,
+        "note": updated.note,
+    }
+    await log_write(
+        lambda: items_repo.update_by_key("item_id", item_id, record),
+        bot_client=bot_client,
+        channel_id=settings.discord_log_channel_id,
+        actor_name=user.name,
+        actor_id=user.discord_user_id,
+        sheet_name="items",
+        operation="update",
+        record={"item_id": item_id, **record},
     )
     return updated
 
@@ -100,10 +121,21 @@ async def delete_item(
     item_id: str,
     user: User = Depends(get_current_user),
     items_repo: SheetRepository = Depends(get_items_repository),
+    bot_client: DiscordBotClient = Depends(get_bot_client),
+    settings: AuthSettings = Depends(get_auth_settings),
 ) -> Item:
     item = _find_item_or_404(items_repo, item_id)
     if not can_edit_item(item, user):
         raise AppError(403, "forbidden_item_edit", "cannot edit this item")
 
-    items_repo.update_by_key("item_id", item_id, {"is_active": "FALSE"})
+    await log_write(
+        lambda: items_repo.update_by_key("item_id", item_id, {"is_active": "FALSE"}),
+        bot_client=bot_client,
+        channel_id=settings.discord_log_channel_id,
+        actor_name=user.name,
+        actor_id=user.discord_user_id,
+        sheet_name="items",
+        operation="update(soft delete)",
+        record={"item_id": item_id, "is_active": "FALSE"},
+    )
     return item.model_copy(update={"is_active": False})

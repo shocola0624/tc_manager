@@ -2,9 +2,11 @@ from __future__ import annotations
 
 from fastapi import Depends, Query
 
-from auth.dependencies import find_raw_user, get_bot_client, get_current_user
+from auth.config import AuthSettings
+from auth.dependencies import find_raw_user, get_auth_settings, get_bot_client, get_current_user
 from auth.discord_client import DiscordBotClient
 from discord_bot.notifications import notify_owner_item_assigned_while_absent
+from discord_bot.write_log import log_write
 from errors import AppError
 from repositories import (
     get_activities_repository,
@@ -110,6 +112,7 @@ async def add_assignment(
     activities_repo: SheetRepository = Depends(get_activities_repository),
     assignments_repo: AppendOnlyRepository = Depends(get_assignments_repository),
     bot_client: DiscordBotClient = Depends(get_bot_client),
+    settings: AuthSettings = Depends(get_auth_settings),
 ) -> AssignmentLogEntry:
     """器具の選択(CLAUDE.md §5・§6)。read-modify-write は行わず、常に append する(CLAUDE.md §4)。"""
     attendance_by_user = _attendance_by_user(attendance_repo, payload.activity_id)
@@ -147,16 +150,24 @@ async def add_assignment(
         raise AppError(403, "forbidden_assignee", "cannot assign this person")
 
     timestamp = now_iso8601()
-    assignments_repo.append(
-        {
-            "timestamp": timestamp,
-            "activity_id": payload.activity_id,
-            "item_id": payload.item_id or "",
-            "custom_name": payload.custom_name or "",
-            "assignee_id": resolved_assignee_id or "",
-            "action": "add",
-            "actor_id": user.discord_user_id,
-        }
+    add_record = {
+        "timestamp": timestamp,
+        "activity_id": payload.activity_id,
+        "item_id": payload.item_id or "",
+        "custom_name": payload.custom_name or "",
+        "assignee_id": resolved_assignee_id or "",
+        "action": "add",
+        "actor_id": user.discord_user_id,
+    }
+    await log_write(
+        lambda: assignments_repo.append(add_record),
+        bot_client=bot_client,
+        channel_id=settings.discord_log_channel_id,
+        actor_name=user.name,
+        actor_id=user.discord_user_id,
+        sheet_name="assignments",
+        operation="append(add)",
+        record=add_record,
     )
 
     if payload.item_id is not None and candidate.requires_assignee and item.storage == Storage.OWNER:
@@ -186,19 +197,29 @@ async def remove_assignment(
     payload: AssignmentRemoveRequest,
     user: User = Depends(get_current_user),
     assignments_repo: AppendOnlyRepository = Depends(get_assignments_repository),
+    bot_client: DiscordBotClient = Depends(get_bot_client),
+    settings: AuthSettings = Depends(get_auth_settings),
 ) -> AssignmentLogEntry:
     """器具の解除。担当者に関わらず全 is_active ユーザーが行える(CLAUDE.md §6)。"""
     timestamp = now_iso8601()
-    assignments_repo.append(
-        {
-            "timestamp": timestamp,
-            "activity_id": payload.activity_id,
-            "item_id": payload.item_id or "",
-            "custom_name": payload.custom_name or "",
-            "assignee_id": "",
-            "action": "remove",
-            "actor_id": user.discord_user_id,
-        }
+    remove_record = {
+        "timestamp": timestamp,
+        "activity_id": payload.activity_id,
+        "item_id": payload.item_id or "",
+        "custom_name": payload.custom_name or "",
+        "assignee_id": "",
+        "action": "remove",
+        "actor_id": user.discord_user_id,
+    }
+    await log_write(
+        lambda: assignments_repo.append(remove_record),
+        bot_client=bot_client,
+        channel_id=settings.discord_log_channel_id,
+        actor_name=user.name,
+        actor_id=user.discord_user_id,
+        sheet_name="assignments",
+        operation="append(remove)",
+        record=remove_record,
     )
     return AssignmentLogEntry(
         timestamp=timestamp,

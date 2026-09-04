@@ -64,7 +64,8 @@ def _build_client(repo, user: User, bot_client: FakeBotClient) -> TestClient:
     app.dependency_overrides[get_current_user] = lambda: user
     app.dependency_overrides[get_bot_client] = lambda: bot_client
     app.dependency_overrides[get_auth_settings] = lambda: SimpleNamespace(
-        discord_announce_channel_id="channel-1"
+        discord_announce_channel_id="channel-1",
+        discord_log_channel_id="log-channel-1",
     )
     return TestClient(app)
 
@@ -101,7 +102,7 @@ def test_officer_can_announce_activity(activities_repo):
     assert response.status_code == 200
     assert response.json()["announce_message_id"] == "msg-42"
 
-    assert len(bot_client.calls) == 1
+    assert len(bot_client.calls) == 2
     channel_id, payload = bot_client.calls[0]
     assert channel_id == "channel-1"
     assert "定例会" in payload["content"]
@@ -111,6 +112,11 @@ def test_officer_can_announce_activity(activities_repo):
         f"attendance:{activity_id}:absent",
         f"attendance:{activity_id}:undecided",
     ]
+
+    # 実行者を含む書き込みログが別チャンネルへ投稿される
+    log_channel_id, log_payload = bot_client.calls[1]
+    assert log_channel_id == "log-channel-1"
+    assert "Officer" in log_payload["embeds"][0]["description"]
 
     stored = activities_repo.read_all()
     assert stored[0]["announce_message_id"] == "msg-42"

@@ -6,6 +6,7 @@ from fastapi import APIRouter, Depends, Request, Response
 from fastapi.responses import RedirectResponse
 from pydantic import ValidationError
 
+from discord_bot.write_log import log_write
 from errors import AppError
 from sheets.repository import SheetRepository
 from sheets.schemas import User
@@ -112,8 +113,17 @@ async def callback(
         role_ids = await bot_client.fetch_member_role_ids(discord_user.id)
         resolved_role = resolve_role(role_ids, settings)
         if resolved_role != user.role:
-            users_repo.update_by_key(
-                "discord_user_id", discord_user.id, {"role": resolved_role.value}
+            await log_write(
+                lambda: users_repo.update_by_key(
+                    "discord_user_id", discord_user.id, {"role": resolved_role.value}
+                ),
+                bot_client=bot_client,
+                channel_id=settings.discord_log_channel_id,
+                actor_name=user.name,
+                actor_id=discord_user.id,
+                sheet_name="users",
+                operation="update(role resync)",
+                record={"discord_user_id": discord_user.id, "role": resolved_role.value},
             )
     except DiscordOAuthError:
         pass
@@ -165,7 +175,16 @@ async def register(
         "locale": "ja",
         "registered_at": now_iso8601(),
     }
-    users_repo.upsert_by_key("discord_user_id", discord_user_id, record)
+    await log_write(
+        lambda: users_repo.upsert_by_key("discord_user_id", discord_user_id, record),
+        bot_client=bot_client,
+        channel_id=settings.discord_log_channel_id,
+        actor_name=payload.name,
+        actor_id=discord_user_id,
+        sheet_name="users",
+        operation="upsert(register)",
+        record=record,
+    )
 
     clear_cookie(response, PENDING_COOKIE)
     set_cookie(

@@ -39,6 +39,7 @@ def test_missing_configured_role_ids_default_to_member():
         discord_public_key="x",
         discord_announce_channel_id="x",
         discord_confirm_announce_channel_id="x",
+        discord_log_channel_id="x",
         session_secret_key="x",
         frontend_base_url="x",
         cookie_secure=False,

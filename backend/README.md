@@ -51,6 +51,7 @@ cp .env.example .env
 7. **General Information** タブの `Public Key` を控えて `.env` の `DISCORD_PUBLIC_KEY` に設定する(Interactions の Ed25519 署名検証に使う。CLAUDE.md §3)
 8. アナウンス(出欠ボタン付きRSVP告知)を投稿したいテキストチャンネルの ID を調べて `.env` の `DISCORD_ANNOUNCE_CHANNEL_ID` に設定する(チャンネルを右クリック→「チャンネルIDをコピー」)。Bot をそのチャンネルに投稿できる権限(閲覧・メッセージ送信)で招待しておくこと
 9. 「活動を確定する」ボタンで投稿する確定情報(器具・予算・タスク等をまとめた長文)は上記とは別のチャンネルに投稿する想定。投稿先チャンネルの ID を `.env` の `DISCORD_CONFIRM_ANNOUNCE_CHANNEL_ID` に設定する(同じチャンネルにしたい場合は `DISCORD_ANNOUNCE_CHANNEL_ID` と同じ値でよい)
+10. スプレッドシートへの書き込み(作成・更新・論理削除)は、成功・失敗を問わず全件 Discord へログとして投稿する(実行者名・試みた内容・失敗時はエラー内容を含む)。投稿先チャンネルの ID を `.env` の `DISCORD_LOG_CHANNEL_ID` に設定する(他のチャンネルと兼用しても問題ない。運用者向けの内部ログのため、部員が普段見る必要のないチャンネルを分けて用意することを推奨)
 
 ロールの自動割り当ては **ログインのたびに** Discord 側のロールと再同期される。シート上で `role` 列を手動編集しても、次回ログイン時に Discord 側の状態で上書きされる点に注意(CLAUDE.md §6)。
 

@@ -47,6 +47,7 @@ def app_module(monkeypatch, dummy_service_account_file):
         "DISCORD_PUBLIC_KEY": "ab" * 32,
         "DISCORD_ANNOUNCE_CHANNEL_ID": "dummy-channel",
         "DISCORD_CONFIRM_ANNOUNCE_CHANNEL_ID": "dummy-confirm-channel",
+        "DISCORD_LOG_CHANNEL_ID": "dummy-log-channel",
         "SESSION_SECRET_KEY": "dummy-session-secret",
         "FRONTEND_BASE_URL": "http://localhost:5173",
         "COOKIE_SECURE": "false",

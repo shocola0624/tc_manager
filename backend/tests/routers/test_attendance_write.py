@@ -1,8 +1,10 @@
+from types import SimpleNamespace
+
 import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
-from auth.dependencies import get_bot_client, get_current_user
+from auth.dependencies import get_auth_settings, get_bot_client, get_current_user
 from auth.session import SessionSigner
 from errors import install_exception_handlers
 from repositories import (
@@ -45,9 +47,14 @@ ASSIGNMENTS_HEADER = [
 class FakeBotClient:
     def __init__(self) -> None:
         self.dm_calls: list[tuple[str, str]] = []
+        self.log_calls: list[tuple[str, dict]] = []
 
     async def send_direct_message(self, discord_user_id: str, content: str) -> None:
         self.dm_calls.append((discord_user_id, content))
+
+    async def create_message(self, channel_id: str, payload: dict) -> dict:
+        self.log_calls.append((channel_id, payload))
+        return {"id": "msg-1"}
 
 
 def _user(**overrides) -> User:
@@ -90,6 +97,9 @@ def _build_client(
         or AppendOnlyRepository(fake_client_factory("assignments", header=ASSIGNMENTS_HEADER, rows=[]), "assignments")
     )
     app.dependency_overrides[get_bot_client] = lambda: bot_client or FakeBotClient()
+    app.dependency_overrides[get_auth_settings] = lambda: SimpleNamespace(
+        discord_log_channel_id="log-channel-1"
+    )
     return TestClient(app)
 
 

@@ -19,6 +19,7 @@ def auth_settings() -> AuthSettings:
         discord_public_key="ab" * 32,
         discord_announce_channel_id="channel-1",
         discord_confirm_announce_channel_id="confirm-channel-1",
+        discord_log_channel_id="log-channel-1",
         session_secret_key="test-secret-key",
         frontend_base_url="http://localhost:5173",
         cookie_secure=False,

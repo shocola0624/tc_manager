@@ -5,10 +5,11 @@ import secrets
 from fastapi import Depends
 
 from auth.config import AuthSettings
-from auth.dependencies import get_auth_settings, get_bot_client, require_role
+from auth.dependencies import get_auth_settings, get_bot_client, get_current_user, require_role
 from auth.discord_client import DiscordBotClient, DiscordOAuthError
 from discord_bot.announce import announce_activity
 from discord_bot.confirm_announce import confirm_activity
+from discord_bot.write_log import log_write
 from errors import AppError
 from repositories import (
     get_activities_repository,
@@ -19,7 +20,7 @@ from repositories import (
 )
 from sheets.parsing import parse_records
 from sheets.repository import SheetRepository
-from sheets.schemas import Activity, Role
+from sheets.schemas import Activity, Role, User
 
 from ._common import make_list_router
 from .activities_schemas import ActivityCreateRequest, ActivityUpdateRequest
@@ -49,7 +50,10 @@ def _find_activity_or_404(activities_repo: SheetRepository, activity_id: str) ->
 @router.post("", response_model=Activity, dependencies=[Depends(_can_manage_activities)])
 async def create_activity(
     payload: ActivityCreateRequest,
+    user: User = Depends(get_current_user),
     activities_repo: SheetRepository = Depends(get_activities_repository),
+    bot_client: DiscordBotClient = Depends(get_bot_client),
+    settings: AuthSettings = Depends(get_auth_settings),
 ) -> Activity:
     activity = Activity(
         activity_id=_generate_activity_id(),
@@ -65,21 +69,29 @@ async def create_activity(
         announce_message_id=None,
         is_active=True,
     )
-    activities_repo.append(
-        {
-            "activity_id": activity.activity_id,
-            "starts_at": activity.starts_at.isoformat(),
-            "duration_min": str(activity.duration_min),
-            "location": activity.location,
-            "title": activity.title,
-            "description": activity.description,
-            "target": activity.target,
-            "owner_id": activity.owner_id,
-            "tasks": activity.tasks,
-            "note": activity.note,
-            "announce_message_id": "",
-            "is_active": "TRUE",
-        }
+    record = {
+        "activity_id": activity.activity_id,
+        "starts_at": activity.starts_at.isoformat(),
+        "duration_min": str(activity.duration_min),
+        "location": activity.location,
+        "title": activity.title,
+        "description": activity.description,
+        "target": activity.target,
+        "owner_id": activity.owner_id,
+        "tasks": activity.tasks,
+        "note": activity.note,
+        "announce_message_id": "",
+        "is_active": "TRUE",
+    }
+    await log_write(
+        lambda: activities_repo.append(record),
+        bot_client=bot_client,
+        channel_id=settings.discord_log_channel_id,
+        actor_name=user.name,
+        actor_id=user.discord_user_id,
+        sheet_name="activities",
+        operation="append",
+        record=record,
     )
     return activity
 
@@ -90,26 +102,35 @@ async def create_activity(
 async def update_activity(
     activity_id: str,
     payload: ActivityUpdateRequest,
+    user: User = Depends(get_current_user),
     activities_repo: SheetRepository = Depends(get_activities_repository),
+    bot_client: DiscordBotClient = Depends(get_bot_client),
+    settings: AuthSettings = Depends(get_auth_settings),
 ) -> Activity:
     activity = _find_activity_or_404(activities_repo, activity_id)
     updates = payload.model_dump(exclude_unset=True)
     updated = activity.model_copy(update=updates)
 
-    activities_repo.update_by_key(
-        "activity_id",
-        activity_id,
-        {
-            "starts_at": updated.starts_at.isoformat(),
-            "duration_min": str(updated.duration_min),
-            "location": updated.location,
-            "title": updated.title,
-            "description": updated.description,
-            "target": updated.target,
-            "owner_id": updated.owner_id,
-            "tasks": updated.tasks,
-            "note": updated.note,
-        },
+    record = {
+        "starts_at": updated.starts_at.isoformat(),
+        "duration_min": str(updated.duration_min),
+        "location": updated.location,
+        "title": updated.title,
+        "description": updated.description,
+        "target": updated.target,
+        "owner_id": updated.owner_id,
+        "tasks": updated.tasks,
+        "note": updated.note,
+    }
+    await log_write(
+        lambda: activities_repo.update_by_key("activity_id", activity_id, record),
+        bot_client=bot_client,
+        channel_id=settings.discord_log_channel_id,
+        actor_name=user.name,
+        actor_id=user.discord_user_id,
+        sheet_name="activities",
+        operation="update",
+        record={"activity_id": activity_id, **record},
     )
     return updated
 
@@ -119,10 +140,22 @@ async def update_activity(
 )
 async def delete_activity(
     activity_id: str,
+    user: User = Depends(get_current_user),
     activities_repo: SheetRepository = Depends(get_activities_repository),
+    bot_client: DiscordBotClient = Depends(get_bot_client),
+    settings: AuthSettings = Depends(get_auth_settings),
 ) -> Activity:
     activity = _find_activity_or_404(activities_repo, activity_id)
-    activities_repo.update_by_key("activity_id", activity_id, {"is_active": "FALSE"})
+    await log_write(
+        lambda: activities_repo.update_by_key("activity_id", activity_id, {"is_active": "FALSE"}),
+        bot_client=bot_client,
+        channel_id=settings.discord_log_channel_id,
+        actor_name=user.name,
+        actor_id=user.discord_user_id,
+        sheet_name="activities",
+        operation="update(soft delete)",
+        record={"activity_id": activity_id, "is_active": "FALSE"},
+    )
     return activity.model_copy(update={"is_active": False})
 
 
@@ -131,6 +164,7 @@ async def delete_activity(
 )
 async def announce(
     activity_id: str,
+    user: User = Depends(get_current_user),
     activities_repo: SheetRepository = Depends(get_activities_repository),
     bot_client: DiscordBotClient = Depends(get_bot_client),
     settings: AuthSettings = Depends(get_auth_settings),
@@ -148,6 +182,9 @@ async def announce(
             bot_client=bot_client,
             activities_repo=activities_repo,
             channel_id=settings.discord_announce_channel_id,
+            log_channel_id=settings.discord_log_channel_id,
+            actor_name=user.name,
+            actor_id=user.discord_user_id,
         )
     except DiscordOAuthError as exc:
         raise AppError(502, "discord_announce_failed", str(exc)) from exc

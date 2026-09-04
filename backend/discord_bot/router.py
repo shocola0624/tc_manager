@@ -69,6 +69,7 @@ async def _handle_attendance_button(
     assignments_repo: SheetRepository,
     bot_client: DiscordBotClient,
     frontend_base_url: str,
+    log_channel_id: str,
 ) -> None:
     """deferred ack を返した後にバックグラウンドで実行する(CLAUDE.md §3: 3秒制限のため
     Sheets 書き込みは同期応答に含めない)。未登録・無効ユーザーはシートへ書き込まない
@@ -90,7 +91,15 @@ async def _handle_attendance_button(
             )
             return
 
-        set_attendance(attendance_repo, activity_id, discord_user_id, status)
+        await set_attendance(
+            attendance_repo,
+            activity_id,
+            discord_user_id,
+            status,
+            bot_client=bot_client,
+            log_channel_id=log_channel_id,
+            actor_name=user.name,
+        )
         await send_followup(
             http_client,
             application_id,
@@ -150,6 +159,7 @@ async def handle_interaction(
                 assignments_repo=request.app.state.assignments_repo,
                 bot_client=request.app.state.bot_client,
                 frontend_base_url=settings.frontend_base_url,
+                log_channel_id=settings.discord_log_channel_id,
             )
         # 未知の custom_id(将来の他機能のボタン)は無視して deferred ack のみ返す。
         return JSONResponse({"type": _RESPONSE_TYPE_DEFERRED_UPDATE_MESSAGE})

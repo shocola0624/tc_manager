@@ -42,9 +42,14 @@ ASSIGNMENTS_HEADER = [
 class FakeBotClient:
     def __init__(self) -> None:
         self.dm_calls: list[tuple[str, str]] = []
+        self.log_calls: list[tuple[str, dict]] = []
 
     async def send_direct_message(self, discord_user_id: str, content: str) -> None:
         self.dm_calls.append((discord_user_id, content))
+
+    async def create_message(self, channel_id: str, payload: dict) -> dict:
+        self.log_calls.append((channel_id, payload))
+        return {"id": "msg-1"}
 
 
 class _Settings:
@@ -54,10 +59,12 @@ class _Settings:
         *,
         application_id: str = "app-1",
         frontend_base_url: str = "http://localhost:5173",
+        discord_log_channel_id: str = "log-channel-1",
     ) -> None:
         self.discord_public_key = public_key_hex
         self.discord_client_id = application_id
         self.frontend_base_url = frontend_base_url
+        self.discord_log_channel_id = discord_log_channel_id
 
 
 def _build_app(

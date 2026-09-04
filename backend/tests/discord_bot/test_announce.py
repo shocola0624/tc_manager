@@ -92,10 +92,19 @@ async def test_announce_activity_saves_message_id(fake_client_factory):
     bot_client = FakeBotClient(message_id="msg-99")
 
     message_id = await announce_activity(
-        _activity(), bot_client=bot_client, activities_repo=repo, channel_id="channel-1"
+        _activity(),
+        bot_client=bot_client,
+        activities_repo=repo,
+        channel_id="channel-1",
+        log_channel_id="log-channel-1",
+        actor_name="Officer",
+        actor_id="o1",
     )
 
     assert message_id == "msg-99"
     assert bot_client.calls[0][0] == "channel-1"
     stored = repo.read_all()
     assert stored[0]["announce_message_id"] == "msg-99"
+    # 実行者情報を含むログもログチャンネルへ投稿される
+    assert bot_client.calls[1][0] == "log-channel-1"
+    assert "Officer" in bot_client.calls[1][1]["embeds"][0]["description"]

@@ -42,9 +42,14 @@ class FakeOAuthClient:
 class FakeBotClient:
     def __init__(self, role_ids: list[str] | None) -> None:
         self.role_ids = role_ids
+        self.log_calls: list[tuple[str, dict]] = []
 
     async def fetch_member_role_ids(self, discord_user_id: str) -> list[str] | None:
         return self.role_ids
+
+    async def create_message(self, channel_id: str, payload: dict) -> dict:
+        self.log_calls.append((channel_id, payload))
+        return {"id": "msg-1"}
 
 
 def _login_state(login_response) -> str:

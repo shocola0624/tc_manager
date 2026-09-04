@@ -4,12 +4,15 @@ import secrets
 
 from fastapi import Depends
 
-from auth.dependencies import require_role
+from auth.config import AuthSettings
+from auth.dependencies import get_auth_settings, get_bot_client, get_current_user, require_role
+from auth.discord_client import DiscordBotClient
+from discord_bot.write_log import log_write
 from errors import AppError
 from repositories import get_budget_items_repository
 from sheets.parsing import parse_records
 from sheets.repository import SheetRepository
-from sheets.schemas import BudgetItem, Role
+from sheets.schemas import BudgetItem, Role, User
 
 from ._common import make_list_router
 from .budget_items_schemas import BudgetItemCreateRequest
@@ -42,7 +45,10 @@ def _find_budget_item_or_404(budget_items_repo: SheetRepository, budget_item_id:
 @router.post("", response_model=BudgetItem, dependencies=[Depends(_can_manage_budget)])
 async def create_budget_item(
     payload: BudgetItemCreateRequest,
+    user: User = Depends(get_current_user),
     budget_items_repo: SheetRepository = Depends(get_budget_items_repository),
+    bot_client: DiscordBotClient = Depends(get_bot_client),
+    settings: AuthSettings = Depends(get_auth_settings),
 ) -> BudgetItem:
     item = BudgetItem(
         budget_item_id=_generate_budget_item_id(),
@@ -51,14 +57,22 @@ async def create_budget_item(
         amount_jpy=payload.amount_jpy,
         is_active=True,
     )
-    budget_items_repo.append(
-        {
-            "budget_item_id": item.budget_item_id,
-            "activity_id": item.activity_id,
-            "label": item.label,
-            "amount_jpy": str(item.amount_jpy),
-            "is_active": "TRUE",
-        }
+    record = {
+        "budget_item_id": item.budget_item_id,
+        "activity_id": item.activity_id,
+        "label": item.label,
+        "amount_jpy": str(item.amount_jpy),
+        "is_active": "TRUE",
+    }
+    await log_write(
+        lambda: budget_items_repo.append(record),
+        bot_client=bot_client,
+        channel_id=settings.discord_log_channel_id,
+        actor_name=user.name,
+        actor_id=user.discord_user_id,
+        sheet_name="budget_items",
+        operation="append",
+        record=record,
     )
     return item
 
@@ -68,8 +82,22 @@ async def create_budget_item(
 )
 async def delete_budget_item(
     budget_item_id: str,
+    user: User = Depends(get_current_user),
     budget_items_repo: SheetRepository = Depends(get_budget_items_repository),
+    bot_client: DiscordBotClient = Depends(get_bot_client),
+    settings: AuthSettings = Depends(get_auth_settings),
 ) -> BudgetItem:
     item = _find_budget_item_or_404(budget_items_repo, budget_item_id)
-    budget_items_repo.update_by_key("budget_item_id", budget_item_id, {"is_active": "FALSE"})
+    await log_write(
+        lambda: budget_items_repo.update_by_key(
+            "budget_item_id", budget_item_id, {"is_active": "FALSE"}
+        ),
+        bot_client=bot_client,
+        channel_id=settings.discord_log_channel_id,
+        actor_name=user.name,
+        actor_id=user.discord_user_id,
+        sheet_name="budget_items",
+        operation="update(soft delete)",
+        record={"budget_item_id": budget_item_id, "is_active": "FALSE"},
+    )
     return item.model_copy(update={"is_active": False})

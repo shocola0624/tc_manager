@@ -14,6 +14,7 @@ class AuthSettings(BaseSettings):
     discord_public_key: str
     discord_announce_channel_id: str
     discord_confirm_announce_channel_id: str
+    discord_log_channel_id: str
 
     session_secret_key: str
     frontend_base_url: str

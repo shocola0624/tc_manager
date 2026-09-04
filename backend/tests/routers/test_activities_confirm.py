@@ -108,6 +108,7 @@ def _build_client(
     app.dependency_overrides[get_auth_settings] = lambda: SimpleNamespace(
         discord_announce_channel_id="channel-1",
         discord_confirm_announce_channel_id="confirm-channel-1",
+        discord_log_channel_id="log-channel-1",
     )
     return TestClient(app)
 
