@@ -157,6 +157,7 @@
     "detailTasksLabel": "タスク",
     "detailNoteLabel": "備考",
     "manageSectionLabel": "管理",
+    "modalAddTitle": "活動日を追加",
     "editModalTitle": "活動を編集",
     "confirmButton": "活動を確定する",
     "confirmActivityConfirm": "確定情報をDiscordの指定チャンネルへ投稿します。よろしいですか?"

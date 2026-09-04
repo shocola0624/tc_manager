@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { useCreateActivity, useUpdateActivity } from "../api/hooks";
 import type { Activity } from "../api/types";
 import { Button } from "../components/Button";
@@ -13,6 +13,50 @@ interface ActivityFormProps {
   currentUserId: string;
   activeUsers: User[];
   onDone: () => void;
+}
+
+interface ActivityDraft {
+  title: string;
+  date: string;
+  time: string;
+  durationMin: number;
+  location: string;
+  ownerId: string;
+  description: string;
+  target: string;
+  tasks: string;
+  note: string;
+}
+
+/** 新規作成中の下書きをブラウザに保存し、モーダルを誤って閉じても再度開けば続きから
+ * 書けるようにする(CLAUDE.md §3: キャッシュはブラウザ側)。編集フォームは対象にしない。 */
+function draftStorageKey(currentUserId: string): string {
+  return `tc-manager:activity-draft:${currentUserId}`;
+}
+
+function loadDraft(currentUserId: string): ActivityDraft | null {
+  try {
+    const raw = window.localStorage.getItem(draftStorageKey(currentUserId));
+    return raw ? (JSON.parse(raw) as ActivityDraft) : null;
+  } catch {
+    return null;
+  }
+}
+
+function saveDraft(currentUserId: string, draft: ActivityDraft): void {
+  try {
+    window.localStorage.setItem(draftStorageKey(currentUserId), JSON.stringify(draft));
+  } catch {
+    // プライベートブラウジング等で使えない場合、下書き保存はあきらめる(補助機能のため)。
+  }
+}
+
+function clearDraft(currentUserId: string): void {
+  try {
+    window.localStorage.removeItem(draftStorageKey(currentUserId));
+  } catch {
+    // 上記と同様
+  }
 }
 
 /**
@@ -31,17 +75,36 @@ export function ActivityForm({
   const updateActivity = useUpdateActivity();
 
   const initialSplit = activity ? splitJstIso(activity.starts_at) : { date: "", time: "" };
+  const [draft] = useState<ActivityDraft | null>(() =>
+    mode === "create" ? loadDraft(currentUserId) : null,
+  );
 
-  const [title, setTitle] = useState(activity?.title ?? "");
-  const [date, setDate] = useState(initialSplit.date);
-  const [time, setTime] = useState(initialSplit.time);
-  const [durationMin, setDurationMin] = useState(activity?.duration_min ?? 60);
-  const [location, setLocation] = useState(activity?.location ?? "");
-  const [ownerId, setOwnerId] = useState(activity?.owner_id ?? currentUserId);
-  const [description, setDescription] = useState(activity?.description ?? "");
-  const [target, setTarget] = useState(activity?.target ?? "");
-  const [tasks, setTasks] = useState(activity?.tasks ?? "");
-  const [note, setNote] = useState(activity?.note ?? "");
+  const [title, setTitle] = useState(activity?.title ?? draft?.title ?? "");
+  const [date, setDate] = useState(draft?.date ?? initialSplit.date);
+  const [time, setTime] = useState(draft?.time ?? initialSplit.time);
+  const [durationMin, setDurationMin] = useState(activity?.duration_min ?? draft?.durationMin ?? 60);
+  const [location, setLocation] = useState(activity?.location ?? draft?.location ?? "");
+  const [ownerId, setOwnerId] = useState(activity?.owner_id ?? draft?.ownerId ?? currentUserId);
+  const [description, setDescription] = useState(activity?.description ?? draft?.description ?? "");
+  const [target, setTarget] = useState(activity?.target ?? draft?.target ?? "");
+  const [tasks, setTasks] = useState(activity?.tasks ?? draft?.tasks ?? "");
+  const [note, setNote] = useState(activity?.note ?? draft?.note ?? "");
+
+  useEffect(() => {
+    if (mode !== "create") return;
+    saveDraft(currentUserId, {
+      title,
+      date,
+      time,
+      durationMin,
+      location,
+      ownerId,
+      description,
+      target,
+      tasks,
+      note,
+    });
+  }, [mode, currentUserId, title, date, time, durationMin, location, ownerId, description, target, tasks, note]);
 
   const pending = createActivity.isPending || updateActivity.isPending;
   const error = mode === "create" ? createActivity.error : updateActivity.error;
@@ -62,7 +125,12 @@ export function ActivityForm({
     };
 
     if (mode === "create") {
-      createActivity.mutate(payload, { onSuccess: onDone });
+      createActivity.mutate(payload, {
+        onSuccess: () => {
+          clearDraft(currentUserId);
+          onDone();
+        },
+      });
     } else if (activity) {
       updateActivity.mutate({ activityId: activity.activity_id, payload }, { onSuccess: onDone });
     }

@@ -5,6 +5,7 @@ import { useAuth } from "../auth/AuthProvider";
 import { Button } from "../components/Button";
 import { DetailHeader } from "../components/DetailHeader";
 import { InvalidRowsWarning } from "../components/InvalidRowsWarning";
+import { Modal } from "../components/Modal";
 import { useI18n } from "../i18n/useI18n";
 import { useUserDirectory } from "../users/useUserDirectory";
 import { ActivityForm } from "./ActivityForm";
@@ -23,7 +24,7 @@ export function ActivitiesPage() {
   const { activeUsers, isPending: usersPending } = useUserDirectory();
 
   const [tab, setTab] = useState<Tab>("upcoming");
-  const [showCreateForm, setShowCreateForm] = useState(false);
+  const [showCreateModal, setShowCreateModal] = useState(false);
 
   // 削除(is_active=FALSE)された活動は一覧からは常に除く。
   const activeActivities = useMemo(
@@ -87,20 +88,9 @@ export function ActivitiesPage() {
 
         {canManage && (
           <div className={styles.createSection}>
-            <Button
-              variant={showCreateForm ? "secondary" : "cta"}
-              onClick={() => setShowCreateForm((value) => !value)}
-            >
-              {showCreateForm ? t("activities.cancelButton") : t("activities.addButton")}
+            <Button variant="cta" onClick={() => setShowCreateModal(true)}>
+              {t("activities.addButton")}
             </Button>
-            {showCreateForm && (
-              <ActivityForm
-                mode="create"
-                currentUserId={user.discord_user_id}
-                activeUsers={activeUsers}
-                onDone={() => setShowCreateForm(false)}
-              />
-            )}
           </div>
         )}
 
@@ -137,6 +127,17 @@ export function ActivitiesPage() {
           </ul>
         )}
       </main>
+
+      {showCreateModal && (
+        <Modal title={t("activities.modalAddTitle")} onClose={() => setShowCreateModal(false)}>
+          <ActivityForm
+            mode="create"
+            currentUserId={user.discord_user_id}
+            activeUsers={activeUsers}
+            onDone={() => setShowCreateModal(false)}
+          />
+        </Modal>
+      )}
     </>
   );
 }
