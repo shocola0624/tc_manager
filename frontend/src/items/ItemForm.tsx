@@ -41,7 +41,7 @@ export function ItemForm({ mode, item, currentUser, onDone, onRequestDelete }: I
   const [name, setName] = useState(item?.name ?? "");
   const [maker, setMaker] = useState(item?.maker ?? "");
   const [category, setCategory] = useState<Category>(item?.category ?? "dripper");
-  const [storage, setStorage] = useState<Storage>(item?.storage ?? "clubroom");
+  const [storage, setStorage] = useState<Storage>(item?.storage ?? "owner");
   const [note, setNote] = useState(item?.note ?? "");
   const [ownAsCircle, setOwnAsCircle] = useState(item?.owner_id === CIRCLE_OWNER_ID);
 
