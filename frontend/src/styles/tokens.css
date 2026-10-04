@@ -21,6 +21,7 @@
   --font-sans: "IBM Plex Sans JP", system-ui, -apple-system, "Hiragino Kaku Gothic ProN", "Yu Gothic",
     sans-serif;
   --font-mono: "Roboto Mono", ui-monospace, "SF Mono", monospace;
+  --font-display: "Montserrat", var(--font-sans);
 
   --radius-card: 10px;
   --radius-button: 6px;

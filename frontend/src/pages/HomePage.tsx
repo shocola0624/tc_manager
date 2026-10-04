@@ -115,7 +115,9 @@ export function HomePage() {
   if (!nextActivity) {
     return (
       <main>
-        <div className={styles.hero} />
+        <div className={styles.hero}>
+        <p className={styles.heroTagline}>{t("home.heroTagline")}</p>
+      </div>
         <p className={styles.empty}>{t("home.noUpcoming")}</p>
         <NavTiles />
       </main>
@@ -135,7 +137,9 @@ export function HomePage() {
 
   return (
     <main>
-      <div className={styles.hero} />
+      <div className={styles.hero}>
+        <p className={styles.heroTagline}>{t("home.heroTagline")}</p>
+      </div>
       <div className={styles.card}>
         <div className={styles.cardHeaderRow}>
           <span className={styles.cardLabel}>{t("home.nextActivityLabel")}</span>
