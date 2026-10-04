@@ -33,3 +33,31 @@
   letter-spacing: 0.02em;
   color: var(--ink);
 }
+
+.leftGroup {
+  display: flex;
+  align-items: center;
+  gap: var(--space-7);
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+}
+
+.navButton {
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--muted);
+  text-decoration: none;
+  padding: var(--space-1) 0;
+}
+
+.navButton:hover {
+  color: var(--ink);
+}
+
+.navButton[aria-current="page"] {
+  color: var(--accent);
+}

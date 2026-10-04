@@ -11,6 +11,7 @@ import type { AttendanceStatus } from "../api/types";
 import { useAuth } from "../auth/AuthProvider";
 import { isUpcoming } from "../activities/dateTime";
 import { Button } from "../components/Button";
+import { ActivitiesIcon, ItemsIcon } from "../components/icons";
 import { useI18n } from "../i18n/useI18n";
 import styles from "./HomePage.module.css";
 
@@ -20,37 +21,11 @@ function NavTiles() {
   return (
     <div className={styles.navTiles}>
       <Link to="/activities" className={styles.navTile}>
-        <svg
-          className={styles.navTileIcon}
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth={1.6}
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          aria-hidden="true"
-        >
-          <rect x="4" y="5" width="16" height="15" rx="2" />
-          <path d="M4 9.5h16" />
-          <path d="M8 3v4M16 3v4" />
-        </svg>
+        <ActivitiesIcon className={styles.navTileIcon} />
         <span className={styles.navTileLabel}>{t("nav.activities")}</span>
       </Link>
       <Link to="/items" className={styles.navTile}>
-        <svg
-          className={styles.navTileIcon}
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth={1.6}
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          aria-hidden="true"
-        >
-          <path d="M4 8l8-4 8 4-8 4-8-4z" />
-          <path d="M4 8v8l8 4 8-4V8" />
-          <path d="M12 12v8" />
-        </svg>
+        <ItemsIcon className={styles.navTileIcon} />
         <span className={styles.navTileLabel}>{t("nav.items")}</span>
       </Link>
     </div>
