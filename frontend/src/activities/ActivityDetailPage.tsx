@@ -128,6 +128,13 @@ export function ActivityDetailPage() {
   const attendeeNames = attendanceRows
     .filter((row) => row.status === "attending")
     .map((row) => nameById.get(row.discord_user_id) ?? row.discord_user_id);
+  const absentNames = attendanceRows
+    .filter((row) => row.status === "absent")
+    .map((row) => nameById.get(row.discord_user_id) ?? row.discord_user_id);
+  const respondedIds = new Set(attendanceRows.map((row) => row.discord_user_id));
+  const undecidedNames = activeUsers
+    .filter((activeUser) => !respondedIds.has(activeUser.discord_user_id))
+    .map((activeUser) => activeUser.name);
 
   const canManage = canManageActivities(user);
 
@@ -192,39 +199,55 @@ export function ActivityDetailPage() {
             {activity.location && <div className={styles.location}>{activity.location}</div>}
           </div>
 
-          <div className={styles.tallyRow}>
-            <div className={styles.tallyGroup}>
-              <span className={styles.tallyItem}>
-                {t("activities.tallyAttending")}
-                <b className={styles.tallyAttending}>{attendingCount}</b>
-              </span>
-              <span className={styles.tallyItem}>
-                {t("activities.tallyAbsent")}
-                <b>{absentCount}</b>
-              </span>
-              <span className={styles.tallyItem}>
-                {t("activities.tallyUndecided")}
-                <b>{undecidedCount}</b>
-              </span>
+          <details className={styles.tallyDetails}>
+            <summary className={styles.tallySummary}>
+              <div className={styles.tallyGroup}>
+                <span className={styles.tallyItem}>
+                  {t("activities.tallyAttending")}
+                  <b className={styles.tallyAttending}>{attendingCount}</b>
+                </span>
+                <span className={styles.tallyItem}>
+                  {t("activities.tallyAbsent")}
+                  <b>{absentCount}</b>
+                </span>
+                <span className={styles.tallyItem}>
+                  {t("activities.tallyUndecided")}
+                  <b>{undecidedCount}</b>
+                </span>
+              </div>
+              <div className={styles.statusBadge}>
+                <span
+                  className={`${styles.dot} ${
+                    showRsvpButtons
+                      ? styles.dotWarn
+                      : myStatus === "attending"
+                        ? styles.dotPositive
+                        : styles.dotMuted
+                  }`}
+                  aria-hidden="true"
+                />
+                <span className={styles.statusText}>
+                  {showRsvpButtons
+                    ? t("home.unanswered")
+                    : t(myStatus === "attending" ? "home.attendingAnswered" : "home.absentAnswered")}
+                </span>
+              </div>
+            </summary>
+            <div className={styles.attendeeBreakdown}>
+              <div className={styles.attendeeGroup}>
+                <span className={styles.attendeeGroupLabel}>{t("activities.tallyAttending")}</span>
+                <p className={styles.attendeeGroupList}>{attendeeNames.join("、") || "—"}</p>
+              </div>
+              <div className={styles.attendeeGroup}>
+                <span className={styles.attendeeGroupLabel}>{t("activities.tallyAbsent")}</span>
+                <p className={styles.attendeeGroupList}>{absentNames.join("、") || "—"}</p>
+              </div>
+              <div className={styles.attendeeGroup}>
+                <span className={styles.attendeeGroupLabel}>{t("activities.tallyUndecided")}</span>
+                <p className={styles.attendeeGroupList}>{undecidedNames.join("、") || "—"}</p>
+              </div>
             </div>
-            <div className={styles.statusBadge}>
-              <span
-                className={`${styles.dot} ${
-                  showRsvpButtons
-                    ? styles.dotWarn
-                    : myStatus === "attending"
-                      ? styles.dotPositive
-                      : styles.dotMuted
-                }`}
-                aria-hidden="true"
-              />
-              <span className={styles.statusText}>
-                {showRsvpButtons
-                  ? t("home.unanswered")
-                  : t(myStatus === "attending" ? "home.attendingAnswered" : "home.absentAnswered")}
-              </span>
-            </div>
-          </div>
+          </details>
 
           {showRsvpButtons ? (
             <div className={styles.rsvpActions}>
@@ -395,13 +418,6 @@ export function ActivityDetailPage() {
               </form>
             )}
           </div>
-
-          <details className={styles.details}>
-            <summary className={styles.detailsSummary}>
-              {t("activities.attendeesToggle", { count: attendeeNames.length })}
-            </summary>
-            <p className={styles.attendeesList}>{attendeeNames.join("、") || "—"}</p>
-          </details>
 
           <details className={styles.details}>
             <summary className={styles.detailsSummary}>{t("activities.detailsToggle")}</summary>
