@@ -5,6 +5,7 @@
 .avatar {
   width: 30px;
   height: 30px;
+  padding: 0;
   border-radius: 7px;
   border: 1px solid var(--line);
   background: var(--surface);
@@ -22,6 +23,11 @@
   opacity: 0.6;
 }
 
+.avatarIcon {
+  width: 17px;
+  height: 17px;
+}
+
 .menu {
   position: absolute;
   top: calc(100% + var(--space-2));
@@ -34,7 +40,6 @@
   z-index: 10;
 }
 
-/* 将来: プロフィール情報(表示名・ロール等)をここに出す */
 .menuHeader {
   padding: var(--space-4) var(--space-5);
   border-bottom: 1px solid var(--line);
@@ -43,10 +48,12 @@
   color: var(--ink);
 }
 
+/* button(ログアウト)と Link(プロフィール)の両方に使う共通の行スタイル */
 .menuItem {
   display: block;
   width: 100%;
   text-align: left;
+  text-decoration: none;
   background: transparent;
   border: none;
   border-radius: 0;

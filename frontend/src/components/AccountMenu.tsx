@@ -1,13 +1,14 @@
 import { useMutation } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
+import { Link } from "react-router-dom";
 import { authApi } from "../api/endpoints";
 import { useAuth } from "../auth/AuthProvider";
 import { useI18n } from "../i18n/useI18n";
 import styles from "./AccountMenu.module.css";
+import { PersonIcon } from "./icons";
 
 /**
- * ヘッダーのアバターを押すと開くメニュー。今はログアウトのみだが、将来ここに
- * プロフィール情報(menuHeader)や設定などの選択肢を足していく想定の入れ物として作る。
+ * ヘッダーのアバターを押すと開くメニュー。プロフィールとログアウトの入り口。
  * アバター自体はログアウトを兼ねない(誤操作防止のため、必ずメニューを経由させる)。
  */
 export function AccountMenu() {
@@ -47,11 +48,14 @@ export function AccountMenu() {
         aria-expanded={isOpen}
         aria-label={user?.name ?? ""}
       >
-        {user?.name.slice(0, 1) ?? ""}
+        <PersonIcon className={styles.avatarIcon} />
       </button>
       {isOpen && (
         <div className={styles.menu} role="menu">
           <div className={styles.menuHeader}>{user?.name}</div>
+          <Link to="/profile" role="menuitem" className={styles.menuItem} onClick={() => setIsOpen(false)}>
+            {t("profile.menuLabel")}
+          </Link>
           <button
             type="button"
             role="menuitem"
