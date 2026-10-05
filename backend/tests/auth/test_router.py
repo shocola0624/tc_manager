@@ -279,3 +279,51 @@ def test_me_after_completing_registration_returns_current_user(users_repo, auth_
 
     assert response.status_code == 200
     assert response.json()["discord_user_id"] == "u1"
+
+
+def test_update_me_writes_name_and_grade(users_repo, auth_settings):
+    users_repo.append(ACTIVE_USER_ROW)
+    client = _build_client(
+        users_repo, auth_settings, FakeOAuthClient(DiscordUser("u1", "alice")), FakeBotClient([])
+    )
+    signer = SessionSigner(auth_settings.session_secret_key)
+    client.cookies.set(SESSION_COOKIE.name, signer.sign(SESSION_COOKIE, {"discord_user_id": "u1"}))
+
+    response = client.patch("/auth/me", json={"name": "Alice Renamed", "grade": "26B"})
+
+    assert response.status_code == 200
+    body = response.json()
+    assert body["name"] == "Alice Renamed"
+    assert body["grade"] == "26B"
+    # role/is_active はリクエストに含まれていなくても変化しない
+    assert body["role"] == "member"
+    assert body["is_active"] is True
+
+    stored = users_repo.read_all()[0]
+    assert stored["name"] == "Alice Renamed"
+    assert stored["grade"] == "26B"
+    assert stored["role"] == "member"
+
+
+def test_update_me_rejects_empty_name(users_repo, auth_settings):
+    users_repo.append(ACTIVE_USER_ROW)
+    client = _build_client(
+        users_repo, auth_settings, FakeOAuthClient(DiscordUser("u1", "alice")), FakeBotClient([])
+    )
+    signer = SessionSigner(auth_settings.session_secret_key)
+    client.cookies.set(SESSION_COOKIE.name, signer.sign(SESSION_COOKIE, {"discord_user_id": "u1"}))
+
+    response = client.patch("/auth/me", json={"name": "", "grade": "26B"})
+
+    assert response.status_code == 422
+    assert users_repo.read_all()[0]["name"] == "Alice"
+
+
+def test_update_me_without_session_returns_401(users_repo, auth_settings):
+    client = _build_client(
+        users_repo, auth_settings, FakeOAuthClient(DiscordUser("u1", "alice")), FakeBotClient([])
+    )
+
+    response = client.patch("/auth/me", json={"name": "Alice", "grade": "26B"})
+
+    assert response.status_code == 401

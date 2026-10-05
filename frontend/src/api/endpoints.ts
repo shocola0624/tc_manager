@@ -18,12 +18,15 @@ import type {
   ItemCreateRequest,
   ItemUpdateRequest,
   ListResponse,
+  UpdateProfileRequest,
   User,
 } from "./types";
 
 export const authApi = {
   me: () => apiClient.get<CurrentUser>("/auth/me"),
   register: (name: string) => apiClient.post<CurrentUser>("/auth/register", { name }),
+  updateProfile: (payload: UpdateProfileRequest) =>
+    apiClient.patch<CurrentUser>("/auth/me", payload),
   logout: () => apiClient.post<{ ok: boolean }>("/auth/logout"),
   // OAuth はリダイレクトを伴う実ナビゲーションであり fetch では扱わない。
   // <a href={authApi.loginUrl()}> のように使う。

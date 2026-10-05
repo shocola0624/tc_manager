@@ -9,6 +9,7 @@ function user(role: CurrentUser["role"]): CurrentUser {
     role,
     is_active: true,
     locale: "ja",
+    grade: "",
   };
 }
 

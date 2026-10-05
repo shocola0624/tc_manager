@@ -3,7 +3,7 @@ import pytest
 from auth.config import AuthSettings
 from sheets.repository import SheetRepository
 
-USERS_HEADER = ["discord_user_id", "name", "role", "is_active", "locale", "registered_at"]
+USERS_HEADER = ["discord_user_id", "name", "role", "is_active", "locale", "registered_at", "grade"]
 
 
 @pytest.fixture

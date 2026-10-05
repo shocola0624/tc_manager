@@ -24,6 +24,7 @@ function user(overrides: Partial<CurrentUser> = {}): CurrentUser {
     role: "member",
     is_active: true,
     locale: "ja",
+    grade: "",
     ...overrides,
   };
 }

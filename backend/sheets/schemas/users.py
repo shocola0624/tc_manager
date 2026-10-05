@@ -16,3 +16,4 @@ class User(BaseModel):
     is_active: Annotated[bool, BeforeValidator(parse_bool)]
     locale: str = "ja"
     registered_at: Annotated[datetime | None, BeforeValidator(empty_str_to_none)] = None
+    grade: str = ""

@@ -13,6 +13,7 @@
   --warn: oklch(58% 0.16 45);
   --warn-bg: oklch(58% 0.16 45 / 0.08);
   --positive: oklch(50% 0.11 150);
+  --positive-bg: oklch(50% 0.11 150 / 0.1);
   /* 持ち物の「登録」のような単発の勧誘アクション専用のCTA色(screen-reference.dc(1).html)。
      日常的な操作(--accent)と混同しないよう別トークンにする。 */
   --cta: oklch(62% 0.19 40);

@@ -26,6 +26,7 @@ export interface User {
   is_active: boolean;
   locale: string;
   registered_at: string | null;
+  grade: string;
 }
 
 export interface Item {
@@ -188,6 +189,13 @@ export interface CurrentUser {
   role: Role;
   is_active: boolean;
   locale: string;
+  grade: string;
+}
+
+// auth/schemas.py の UpdateProfileRequest に対応
+export interface UpdateProfileRequest {
+  name: string;
+  grade: string;
 }
 
 export interface ErrorBody {

@@ -10,6 +10,7 @@ import { ErrorPage } from "./pages/ErrorPage";
 import { HomePage } from "./pages/HomePage";
 import { InactivePage } from "./pages/InactivePage";
 import { LoginPage } from "./pages/LoginPage";
+import { ProfilePage } from "./pages/ProfilePage";
 import { RegisterPage } from "./pages/RegisterPage";
 
 /**
@@ -65,6 +66,7 @@ export function AppRouter() {
         }
       >
         <Route index element={<HomePage />} />
+        <Route path="profile" element={<ProfilePage />} />
         <Route path="items" element={<ItemsPage />} />
         <Route path="activities" element={<ActivitiesPage />} />
         <Route path="activities/:activityId" element={<ActivityDetailPage />} />

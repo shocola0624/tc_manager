@@ -1,0 +1,154 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.fieldStack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field input {
+  padding: 11px 12px;
+  font-size: 15px;
+}
+
+.fieldLabel {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.saveRow {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-4);
+}
+
+.errorText {
+  font-size: 12px;
+  color: var(--warn);
+}
+
+.successText {
+  font-size: 12px;
+  color: var(--positive);
+}
+
+.statsRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.statCell {
+  padding: var(--space-5) 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.statCell:first-child {
+  border-right: 1px solid var(--line);
+  padding-right: var(--space-4);
+}
+
+.statCell:last-child {
+  padding-left: var(--space-4);
+}
+
+.statValue {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 26px;
+}
+
+.statUnit {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--muted);
+  margin-left: 4px;
+}
+
+.categoriesHeaderRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-top: calc(-1 * var(--space-2));
+}
+
+.sectionTitle {
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.legend {
+  display: flex;
+  gap: var(--space-4);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.legendDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+}
+
+.legendDotPositive {
+  background: var(--positive);
+}
+
+.legendDotMuted {
+  background: var(--line);
+}
+
+.categoryChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.categoryChip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-button);
+  background: var(--bg);
+  color: var(--muted);
+  font-weight: 600;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.categoryChipActive {
+  background: var(--positive-bg);
+  color: var(--positive);
+}
+
+.categoryChipCount {
+  font-family: var(--font-mono);
+  font-size: 11px;
+}

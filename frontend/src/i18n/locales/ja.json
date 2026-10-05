@@ -53,6 +53,23 @@
     "officer": "幹部",
     "member": "メンバー"
   },
+  "profile": {
+    "menuLabel": "プロフィール",
+    "title": "プロフィール",
+    "nameLabel": "氏名",
+    "gradeLabel": "学年",
+    "gradePlaceholder": "例：26B",
+    "saveButton": "保存する",
+    "saving": "保存しています…",
+    "saveSuccess": "保存しました",
+    "attendanceCountLabel": "出席数",
+    "attendanceCountUnit": "回",
+    "itemsCountLabel": "登録した持ち物",
+    "itemsCountUnit": "点",
+    "categoriesTitle": "持ち物のカテゴリー",
+    "categoryLegendRegistered": "登録あり",
+    "categoryLegendUnregistered": "未登録"
+  },
   "categories": {
     "dripper": "ドリッパー",
     "grinder": "グラインダー",

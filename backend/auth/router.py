@@ -16,6 +16,7 @@ from .dependencies import (
     find_raw_user,
     get_auth_settings,
     get_bot_client,
+    get_current_user,
     get_oauth_client,
     get_signer,
     get_users_repository,
@@ -23,7 +24,7 @@ from .dependencies import (
 )
 from .discord_client import DiscordBotClient, DiscordOAuthClient, DiscordOAuthError
 from .role_resolution import resolve_role
-from .schemas import CurrentUserResponse, RegisterRequest
+from .schemas import CurrentUserResponse, RegisterRequest, UpdateProfileRequest
 from .session import (
     PENDING_COOKIE,
     SESSION_COOKIE,
@@ -231,6 +232,7 @@ async def me(
             role=user.role,
             is_active=user.is_active,
             locale=user.locale,
+            grade=user.grade,
         )
 
     pending_token = request.cookies.get(PENDING_COOKIE.name)
@@ -239,3 +241,34 @@ async def me(
         raise AppError(401, "registration_incomplete", "registration incomplete")
 
     raise AppError(401, "not_authenticated", "not authenticated")
+
+
+@router.patch("/me", response_model=CurrentUserResponse)
+async def update_me(
+    payload: UpdateProfileRequest,
+    user: User = Depends(get_current_user),
+    users_repo: SheetRepository = Depends(get_users_repository),
+    bot_client: DiscordBotClient = Depends(get_bot_client),
+    settings: AuthSettings = Depends(get_auth_settings),
+) -> CurrentUserResponse:
+    """自分の氏名・学年のみを更新する。role/is_active/locale はここでは変更できない
+    (役職はDiscordロールから自動算出、有効/無効は管理者操作のため、CLAUDE.md §6)。"""
+    record = {"name": payload.name, "grade": payload.grade}
+    await log_write(
+        lambda: users_repo.update_by_key("discord_user_id", user.discord_user_id, record),
+        bot_client=bot_client,
+        channel_id=settings.discord_log_channel_id,
+        actor_name=user.name,
+        actor_id=user.discord_user_id,
+        sheet_name="users",
+        operation="update(profile)",
+        record={"discord_user_id": user.discord_user_id, **record},
+    )
+    return CurrentUserResponse(
+        discord_user_id=user.discord_user_id,
+        name=payload.name,
+        role=user.role,
+        is_active=user.is_active,
+        locale=user.locale,
+        grade=payload.grade,
+    )
