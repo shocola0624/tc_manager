@@ -95,6 +95,19 @@ def test_upsert_by_key_updates_when_present(fake_client_factory):
     assert client._rows == [["u1", "Alice B"]]
 
 
+def test_replace_all_clears_then_rewrites_every_row(fake_client_factory):
+    client = fake_client_factory(
+        "task_assignees",
+        header=["task_id", "member_id"],
+        rows=[["t1", "u1"], ["t2", "u2"]],
+    )
+    repo = SheetRepository(client, "task_assignees")
+
+    repo.replace_all([{"task_id": "t1", "member_id": "u3"}, {"task_id": "t3", "member_id": "u4"}])
+
+    assert client._rows == [["t1", "u3"], ["t3", "u4"]]
+
+
 def test_append_only_repository_forbids_update_and_upsert(fake_client_factory):
     client = fake_client_factory("assignments", header=["activity_id"], rows=[])
     repo = AppendOnlyRepository(client, "assignments")
@@ -103,6 +116,8 @@ def test_append_only_repository_forbids_update_and_upsert(fake_client_factory):
         repo.update_by_key("activity_id", "a1", {})
     with pytest.raises(NotImplementedError):
         repo.upsert_by_key("activity_id", "a1", {})
+    with pytest.raises(NotImplementedError):
+        repo.replace_all([])
 
 
 def test_append_only_repository_still_allows_read_and_append(fake_client_factory):

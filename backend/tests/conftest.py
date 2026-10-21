@@ -34,6 +34,14 @@ class FakeSheetsClient:
         assert 0 <= index < len(self._rows)
         self._rows[index] = row
 
+    def append_rows(self, sheet_name: str, rows: list[list[str]]) -> None:
+        assert sheet_name == self._sheet_name
+        self._rows.extend(rows)
+
+    def clear_values(self, sheet_name: str) -> None:
+        assert sheet_name == self._sheet_name
+        self._rows = []
+
 
 @pytest.fixture
 def fake_client_factory():

@@ -61,6 +61,20 @@ class SheetRepository:
             full_record = {**dict(zip(key_columns, key_values, strict=True)), **record}
             self.append(full_record)
 
+    def replace_all(self, records: Sequence[Mapping[str, str]]) -> None:
+        """全データ行をクリアしてから records を書き直す。
+
+        task_assignees のような小さな join シート専用。1タスクの担当者編集のように
+        低頻度・低競合な操作でのみ使うこと(update_by_key と違い対象行を特定しないため、
+        書き込み中に他の行への同時編集があれば失われうる。assignments のような高頻度・
+        高競合な表には絶対に使わない。CLAUDE.md §4 の read-modify-write 回避の例外として、
+        低リスクと判断できる範囲に限定する)。
+        """
+        column_index = build_column_index(self._client.get_header_row(self._sheet_name))
+        self._client.clear_values(self._sheet_name)
+        rows = [record_to_row(record, column_index) for record in records]
+        self._client.append_rows(self._sheet_name, rows)
+
     def _find_row(
         self, key_columns: Sequence[str], key_values: Sequence[str]
     ) -> tuple[int, dict[str, str], dict[str, int]]:
@@ -105,6 +119,9 @@ class AppendOnlyRepository(SheetRepository):
         raise NotImplementedError("assignments シートは追記専用です")
 
     def upsert_by_keys(self, *args: object, **kwargs: object) -> NoReturn:
+        raise NotImplementedError("assignments シートは追記専用です")
+
+    def replace_all(self, *args: object, **kwargs: object) -> NoReturn:
         raise NotImplementedError("assignments シートは追記専用です")
 
 

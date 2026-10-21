@@ -50,3 +50,11 @@ def get_assignments_repository(request: Request) -> AppendOnlyRepository:
 
 def get_budget_items_repository(request: Request) -> SheetRepository:
     return request.app.state.budget_items_repo
+
+
+def get_tasks_repository(request: Request) -> SheetRepository:
+    return request.app.state.tasks_repo
+
+
+def get_task_assignees_repository(request: Request) -> SheetRepository:
+    return request.app.state.task_assignees_repo

@@ -37,6 +37,12 @@ class AssignmentAction(str, Enum):
     REMOVE = "remove"
 
 
+class TaskStatus(str, Enum):
+    TODO = "todo"
+    DOING = "doing"
+    DONE = "done"
+
+
 # items.owner_id / assignments.assignee_id で「個人ではなくサークル所有」を表す特別値。
 # users シートには対応する行が存在しない。
 CIRCLE_OWNER_ID: Final[str] = "CIRCLE"

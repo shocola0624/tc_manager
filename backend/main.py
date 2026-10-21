@@ -17,6 +17,7 @@ from routers.assignments import router as assignments_router
 from routers.attendance import router as attendance_router
 from routers.budget_items import router as budget_items_router
 from routers.items import router as items_router
+from routers.tasks import router as tasks_router
 from routers.users import router as users_router
 from sheets.client import SheetsClient
 from sheets.config import Settings as SheetsSettings
@@ -44,6 +45,8 @@ def create_app() -> FastAPI:
             app.state.attendance_repo = SheetRepository(sheets_client, "attendance")
             app.state.assignments_repo = AppendOnlyRepository(sheets_client, "assignments")
             app.state.budget_items_repo = SheetRepository(sheets_client, "budget_items")
+            app.state.tasks_repo = SheetRepository(sheets_client, "tasks")
+            app.state.task_assignees_repo = SheetRepository(sheets_client, "task_assignees")
 
             yield
 
@@ -64,6 +67,7 @@ def create_app() -> FastAPI:
     app.include_router(attendance_router)
     app.include_router(assignments_router)
     app.include_router(budget_items_router)
+    app.include_router(tasks_router)
     return app
 
 

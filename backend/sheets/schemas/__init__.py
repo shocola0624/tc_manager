@@ -9,8 +9,10 @@ from .common import (
     Category,
     Role,
     Storage,
+    TaskStatus,
 )
 from .items import Item
+from .tasks import Task, TaskAssignee
 from .users import User
 
 __all__ = [
@@ -24,6 +26,9 @@ __all__ = [
     "Category",
     "Role",
     "Storage",
+    "TaskStatus",
     "Item",
+    "Task",
+    "TaskAssignee",
     "User",
 ]

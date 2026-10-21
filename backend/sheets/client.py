@@ -69,6 +69,24 @@ class SheetsClient:
             body={"values": [row]},
         ).execute()
 
+    def append_rows(self, sheet_name: str, rows: list[list[str]]) -> None:
+        if not rows:
+            return
+        self._service.spreadsheets().values().append(
+            spreadsheetId=self._spreadsheet_id,
+            range=_quote_sheet_name(sheet_name),
+            valueInputOption="RAW",
+            insertDataOption="INSERT_ROWS",
+            body={"values": rows},
+        ).execute()
+
+    def clear_values(self, sheet_name: str) -> None:
+        """ヘッダー行を除く全データ行をクリアする。SheetRepository.replace_all 専用。"""
+        self._service.spreadsheets().values().clear(
+            spreadsheetId=self._spreadsheet_id,
+            range=f"{_quote_sheet_name(sheet_name)}!A2:ZZZ",
+        ).execute()
+
     def create_sheet(self, sheet_name: str) -> None:
         """新しいシートタブを追加する。運用上の初期セットアップ(1回限りの実行)向けで、
         通常のアプリのリクエストパスからは呼ばない(CLAUDE.md §1: シート構造は人間が作る)。"""
