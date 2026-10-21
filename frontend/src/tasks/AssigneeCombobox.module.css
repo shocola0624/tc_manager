@@ -1,0 +1,95 @@
+.combobox {
+  position: relative;
+}
+
+.inputRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-button);
+  padding: var(--space-2);
+  background: var(--surface);
+}
+
+.chip {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--bg);
+  border-radius: var(--radius-pill);
+  padding: 4px var(--space-2);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+.chipRemove {
+  background: none;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 13px;
+  line-height: 1;
+  padding: 0;
+}
+
+.input {
+  flex: 1;
+  min-width: 100px;
+  border: none;
+  padding: var(--space-1) var(--space-2);
+  font-size: 13px;
+}
+
+.input:focus {
+  outline: none;
+}
+
+.suggestionList {
+  position: absolute;
+  z-index: 20;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  max-height: 200px;
+  overflow-y: auto;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-button);
+  box-shadow: 0 8px 24px -8px rgba(0, 0, 0, 0.25);
+  list-style: none;
+  margin: 0;
+  padding: var(--space-1);
+}
+
+.suggestionButton {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  background: none;
+  border: none;
+  text-align: left;
+  padding: var(--space-2) var(--space-3);
+  font-size: 13px;
+  color: var(--ink);
+  cursor: pointer;
+  border-radius: var(--radius-button);
+}
+
+.suggestionButton:hover {
+  background: var(--bg);
+}
+
+.suggestionTag {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--accent);
+  background: var(--bg);
+  border-radius: var(--radius-button);
+  padding: 1px var(--space-2);
+}

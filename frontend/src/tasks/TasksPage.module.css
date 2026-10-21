@@ -1,0 +1,220 @@
+.tabs {
+  display: flex;
+  gap: var(--space-3);
+  margin-bottom: var(--space-6);
+}
+
+.tab {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-button);
+  background: transparent;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
+  padding: var(--space-2) var(--space-4);
+  cursor: pointer;
+}
+
+.tabActive {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: #ffffff;
+}
+
+.createSection {
+  margin-bottom: var(--space-6);
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+/* ステータスに応じて左端の色を変える(未着手=グレー/対応中=青/完了=緑、
+   バッジ・ボタンと同じ色分け)。カード全体ではなく左の縁だけにすることで
+   一覧全体が騒がしくならないようにする(items/activities の色分けと同じ考え方)。 */
+.row {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-left-width: 3px;
+  border-radius: var(--radius-card);
+  padding: var(--space-5);
+}
+
+.row_todo {
+  border-left-color: var(--muted);
+}
+
+.row_doing {
+  border-left-color: var(--accent);
+}
+
+.row_done {
+  border-left-color: var(--positive);
+}
+
+/* 期限切れ(完了済みを除く)は、ステータス色より優先して赤で警告する。 */
+.row_overdue {
+  border-left-color: var(--warn);
+}
+
+.rowHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.rowHeaderLeft {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+}
+
+.editButton {
+  flex: none;
+  background: none;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-button);
+  color: var(--muted);
+  font-weight: 600;
+  font-size: 11px;
+  cursor: pointer;
+  padding: var(--space-1) var(--space-3);
+}
+
+.editButton:hover {
+  color: var(--ink);
+  border-color: var(--ink);
+}
+
+.dateTime {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* .dateTime より後ろに書くこと(同じ詳細度のため、後に書いた方が勝つ)。 */
+.dateTimeOverdue {
+  color: var(--warn);
+}
+
+.visibilityBadge {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink);
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-button);
+  padding: 2px var(--space-2);
+  white-space: nowrap;
+}
+
+.title {
+  font-weight: 700;
+  font-size: 15px;
+  line-height: 1.35;
+  margin-top: var(--space-2);
+}
+
+.description {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: var(--space-2);
+}
+
+.assignees {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: var(--space-3);
+}
+
+.statusRow {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--line);
+}
+
+/* 現在のステータス(非インタラクティブ)。塗りつぶしバッジで一目で分かるようにする。 */
+.statusBadge {
+  font-weight: 700;
+  font-size: 11px;
+  border-radius: var(--radius-button);
+  padding: var(--space-2) var(--space-3);
+  white-space: nowrap;
+}
+
+.statusBadge_todo {
+  background: var(--muted-bg);
+  color: var(--muted);
+}
+
+.statusBadge_doing {
+  background: var(--accent-bg);
+  color: var(--accent);
+}
+
+.statusBadge_done {
+  background: var(--positive-bg);
+  color: var(--positive);
+}
+
+/* 他のステータスへの切り替えボタン。1プッシュで即座に反映する(ドロップダウン不要)。
+   枠線のみにして、現在のステータスを示す塗りつぶしバッジと視覚的に区別する。 */
+.statusButton {
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-button);
+  font-weight: 600;
+  font-size: 11px;
+  padding: var(--space-2) var(--space-3);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.statusButton:disabled {
+  cursor: default;
+  opacity: 0.5;
+}
+
+.statusButton_todo {
+  color: var(--muted);
+  border-color: var(--line);
+}
+
+.statusButton_todo:hover:not(:disabled) {
+  background: var(--muted-bg);
+}
+
+.statusButton_doing {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.statusButton_doing:hover:not(:disabled) {
+  background: var(--accent-bg);
+}
+
+.statusButton_done {
+  color: var(--positive);
+  border-color: var(--positive);
+}
+
+.statusButton_done:hover:not(:disabled) {
+  background: var(--positive-bg);
+}
+
+.empty {
+  color: var(--muted);
+  font-size: 13px;
+}

@@ -18,6 +18,9 @@ import type {
   ItemCreateRequest,
   ItemUpdateRequest,
   ListResponse,
+  Task,
+  TaskCreateRequest,
+  TaskUpdateRequest,
   UpdateProfileRequest,
   User,
 } from "./types";
@@ -94,4 +97,12 @@ export const budgetItemsApi = {
     apiClient.post<BudgetItem>("/api/budget-items", payload),
   remove: (budgetItemId: string) =>
     apiClient.delete<BudgetItem>(`/api/budget-items/${encodeURIComponent(budgetItemId)}`),
+};
+
+export const tasksApi = {
+  list: () => apiClient.get<ListResponse<Task>>("/api/tasks"),
+  create: (payload: TaskCreateRequest) => apiClient.post<Task>("/api/tasks", payload),
+  update: (taskId: string, payload: TaskUpdateRequest) =>
+    apiClient.patch<Task>(`/api/tasks/${encodeURIComponent(taskId)}`, payload),
+  remove: (taskId: string) => apiClient.delete<Task>(`/api/tasks/${encodeURIComponent(taskId)}`),
 };

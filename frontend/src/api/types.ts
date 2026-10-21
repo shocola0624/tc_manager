@@ -15,6 +15,7 @@ export type Category =
 export type Storage = "clubroom" | "owner" | "other";
 export type AttendanceStatus = "attending" | "absent" | "undecided";
 export type AssignmentAction = "add" | "remove";
+export type TaskStatus = "todo" | "doing" | "done";
 
 // items.owner_id / assignments.assignee_id で「個人ではなくサークル所有」を表す特別値
 export const CIRCLE_OWNER_ID = "CIRCLE";
@@ -169,6 +170,56 @@ export interface AssignmentRemoveRequest {
   activity_id: string;
   item_id?: string;
   custom_name?: string;
+}
+
+// routers/tasks_schemas.py の TaskAssigneeInput に対応。member_id(登録済みユーザー)か
+// label(部門名などの自由記述)のどちらか一方のみを持つ。
+export interface TaskAssignee {
+  member_id: string | null;
+  label: string | null;
+}
+
+// sheets/schemas/tasks.py の Task + routers/tasks_schemas.py の TaskOut に対応。
+// visibility は既存の Role をそのまま使う(admin/officer/member の階層チェックで
+// 閲覧・作成・担当者指定・ステータス変更・編集・削除のすべてを判定する)。
+export interface Task {
+  task_id: string;
+  title: string;
+  description: string;
+  due_at: string;
+  status: TaskStatus;
+  visibility: Role;
+  related_activity_id: string | null;
+  reminder_offsets: string;
+  google_event_id: string | null;
+  is_active: boolean;
+  created_by: string;
+  created_at: string;
+  updated_at: string;
+  assignees: TaskAssignee[];
+}
+
+// routers/tasks_schemas.py の TaskCreateRequest に対応
+export interface TaskCreateRequest {
+  title: string;
+  description: string;
+  due_at: string;
+  visibility: Role;
+  related_activity_id: string | null;
+  reminder_offsets: string;
+  assignees: TaskAssignee[];
+}
+
+// routers/tasks_schemas.py の TaskUpdateRequest に対応。送ったフィールドだけが更新される。
+export interface TaskUpdateRequest {
+  title?: string;
+  description?: string;
+  due_at?: string;
+  status?: TaskStatus;
+  visibility?: Role;
+  related_activity_id?: string | null;
+  reminder_offsets?: string;
+  assignees?: TaskAssignee[];
 }
 
 export interface InvalidRowOut {

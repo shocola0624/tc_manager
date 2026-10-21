@@ -1,0 +1,215 @@
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-5);
+  margin-bottom: var(--space-5);
+}
+
+.navButton {
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-button);
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.navButton:hover {
+  background: var(--bg);
+}
+
+.monthLabel {
+  font-weight: 700;
+  font-size: 16px;
+  min-width: 9em;
+  text-align: center;
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-5);
+  margin-bottom: var(--space-5);
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex: none;
+}
+
+.dot_activity {
+  background: var(--accent);
+}
+
+.dot_task {
+  background: var(--cta);
+}
+
+.dot_task_done {
+  background: var(--muted);
+}
+
+.weekdayRow {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  margin-bottom: var(--space-2);
+}
+
+.weekdayCell {
+  text-align: center;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  padding-bottom: var(--space-2);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  /* overflow は意図的に hidden にしない。タスクの吹き出し(.eventPopover)が
+     セルの外にはみ出して表示されるため、ここで切り取られると見えなくなる
+     (四隅の角丸からマス目の背景がわずかにはみ出すのは許容する)。 */
+}
+
+/* 高さを min-height ではなく固定の height にすることで、イベント件数が異なる日でも
+   行の高さが揃うようにする(以前は min-height だったため週ごとに高さが不揃いだった)。
+   表示件数は MAX_VISIBLE_PER_DAY で3件+「他N件」に制限しているので、この高さで
+   はみ出さない前提(あえて overflow:hidden にはせず、吹き出しが切り取られないようにする)。
+   min-width: 0 も必須。グリッドアイテムの既定値(min-width: auto)のままだと、
+   長いタイトルなど改行できないコンテンツの幅がそのまま列の最小幅として扱われ、
+   その日の列だけ 1fr より広がってしまう(曜日ごとに幅がバラバラに見えた原因)。 */
+.dayCell {
+  background: var(--surface);
+  height: 104px;
+  min-width: 0;
+  padding: var(--space-2);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.dayCellOutside {
+  background: var(--bg);
+}
+
+.dayCellOutside .dayNumber {
+  color: var(--line);
+}
+
+.dayCellToday {
+  background: var(--accent-bg);
+}
+
+.dayNumber {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.eventList {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.eventPillWrapper {
+  position: relative;
+  min-width: 0;
+}
+
+.eventPill {
+  display: block;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  border: none;
+  border-radius: 3px;
+  padding: 1px 4px;
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: 600;
+  text-align: left;
+  text-decoration: none;
+  cursor: default;
+}
+
+a.eventPill,
+button.eventPill {
+  cursor: pointer;
+}
+
+.eventPopover {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  z-index: 50;
+  width: max-content;
+  max-width: 220px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-button);
+  box-shadow: 0 8px 24px -8px rgba(0, 0, 0, 0.3);
+  padding: var(--space-3);
+}
+
+.eventPopoverTitle {
+  font-weight: 700;
+  font-size: 12px;
+  margin-bottom: var(--space-2);
+}
+
+.eventPopoverDescription {
+  font-size: 11px;
+  color: var(--ink);
+  line-height: 1.5;
+  margin: 0 0 var(--space-2);
+  white-space: pre-wrap;
+}
+
+.eventPopoverAssignees {
+  font-size: 11px;
+  color: var(--muted);
+  margin: 0;
+}
+
+.eventPill_activity {
+  background: var(--accent-bg);
+  color: var(--accent);
+}
+
+.eventPill_task {
+  background: var(--cta-bg);
+  color: var(--cta);
+}
+
+.eventPill_task_done {
+  background: var(--muted-bg);
+  color: var(--muted);
+  text-decoration: line-through;
+}
+
+.overflow {
+  font-size: 10px;
+  color: var(--muted);
+}

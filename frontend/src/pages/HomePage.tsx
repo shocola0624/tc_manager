@@ -11,7 +11,7 @@ import type { AttendanceStatus } from "../api/types";
 import { useAuth } from "../auth/AuthProvider";
 import { isUpcoming } from "../activities/dateTime";
 import { Button } from "../components/Button";
-import { ActivitiesIcon, ItemsIcon } from "../components/icons";
+import { ActivitiesIcon, CalendarGridIcon, ItemsIcon, TasksIcon } from "../components/icons";
 import { useI18n } from "../i18n/useI18n";
 import styles from "./HomePage.module.css";
 
@@ -27,6 +27,14 @@ function NavTiles() {
       <Link to="/items" className={styles.navTile}>
         <ItemsIcon className={styles.navTileIcon} />
         <span className={styles.navTileLabel}>{t("nav.items")}</span>
+      </Link>
+      <Link to="/tasks" className={styles.navTile}>
+        <TasksIcon className={styles.navTileIcon} />
+        <span className={styles.navTileLabel}>{t("nav.tasks")}</span>
+      </Link>
+      <Link to="/calendar" className={styles.navTile}>
+        <CalendarGridIcon className={styles.navTileIcon} />
+        <span className={styles.navTileLabel}>{t("nav.calendar")}</span>
       </Link>
     </div>
   );

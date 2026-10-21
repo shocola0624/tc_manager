@@ -1,0 +1,26 @@
+.editor {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.empty {
+  font-size: 12px;
+  color: var(--muted);
+  margin: 0;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.amountInput {
+  width: 64px;
+  padding: var(--space-2) var(--space-3);
+}
+
+.unitSelect {
+  padding: var(--space-2) var(--space-3);
+}

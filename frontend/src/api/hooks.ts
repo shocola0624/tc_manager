@@ -6,6 +6,7 @@ import {
   attendanceApi,
   budgetItemsApi,
   itemsApi,
+  tasksApi,
   usersApi,
 } from "./endpoints";
 import type {
@@ -22,6 +23,9 @@ import type {
   Item,
   ItemCreateRequest,
   ItemUpdateRequest,
+  Task,
+  TaskCreateRequest,
+  TaskUpdateRequest,
 } from "./types";
 
 // queryClient の defaultOptions(staleTime: Infinity など)に乗るので、
@@ -209,6 +213,40 @@ export function useDeleteBudgetItem() {
     mutationFn: (budgetItemId) => budgetItemsApi.remove(budgetItemId),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ["budgetItems"] });
+    },
+  });
+}
+
+export function useTasks() {
+  return useQuery({ queryKey: ["tasks"], queryFn: tasksApi.list });
+}
+
+export function useCreateTask() {
+  const queryClient = useQueryClient();
+  return useMutation<Task, ApiError, TaskCreateRequest>({
+    mutationFn: (payload) => tasksApi.create(payload),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["tasks"] });
+    },
+  });
+}
+
+export function useUpdateTask() {
+  const queryClient = useQueryClient();
+  return useMutation<Task, ApiError, { taskId: string; payload: TaskUpdateRequest }>({
+    mutationFn: ({ taskId, payload }) => tasksApi.update(taskId, payload),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["tasks"] });
+    },
+  });
+}
+
+export function useDeleteTask() {
+  const queryClient = useQueryClient();
+  return useMutation<Task, ApiError, string>({
+    mutationFn: (taskId) => tasksApi.remove(taskId),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["tasks"] });
     },
   });
 }

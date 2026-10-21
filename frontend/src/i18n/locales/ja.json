@@ -46,7 +46,11 @@
     "assignee_required": "この持ち物には持参担当の指定が必要です。",
     "assignee_not_allowed": "この持ち物には持参担当を指定できません。",
     "assignee_not_found": "指定した担当者が見つかりません。",
-    "forbidden_assignee": "他人を持参担当に指名する権限がありません。"
+    "forbidden_assignee": "他人を持参担当に指名する権限がありません。",
+    "task_not_found": "タスクが見つかりません。",
+    "forbidden_task_visibility": "この公開範囲のタスクを作成・変更する権限がありません。",
+    "forbidden_task_assignee": "指定した担当者はこの公開範囲のタスクに割り当てられません。",
+    "forbidden_task_edit": "このタスクを編集・削除する権限がありません。"
   },
   "roles": {
     "admin": "管理者",
@@ -103,7 +107,9 @@
   "nav": {
     "home": "ホーム",
     "items": "持ち物",
-    "activities": "活動日"
+    "activities": "活動日",
+    "tasks": "タスク",
+    "calendar": "カレンダー"
   },
   "items": {
     "title": "持ち物一覧",
@@ -235,5 +241,68 @@
     "labelPlaceholder": "品目名(例: 豆)",
     "amountPlaceholder": "金額(円)",
     "addButton": "追加"
+  },
+  "tasks": {
+    "title": "タスク一覧",
+    "tabOpen": "未完了",
+    "tabDone": "完了",
+    "addButton": "＋ タスクを追加",
+    "emptyList": "タスクはありません。",
+    "editButton": "編集",
+    "deleteButton": "削除",
+    "deleteConfirm": "このタスクを削除しますか?",
+    "cancelButton": "キャンセル",
+    "saveButton": "保存",
+    "modalAddTitle": "タスクを追加",
+    "modalEditTitle": "タスクを編集",
+    "formTitle": "タイトル",
+    "formDescription": "説明",
+    "formDueDate": "期限日",
+    "formDueTime": "期限時刻",
+    "formVisibility": "公開範囲",
+    "formRelatedActivity": "関連する活動日",
+    "formRelatedActivityNone": "なし",
+    "formAssignees": "担当者",
+    "assigneesEmpty": "担当者未定",
+    "assigneeSearchPlaceholder": "名前または部門名で検索・追加",
+    "removeAssigneeButton": "削除",
+    "departmentTag": "部門",
+    "addDepartmentOption": "「{name}」を部門として追加",
+    "reminderOffsetsLabel": "リマインドのタイミング",
+    "reminderOffsetsEmpty": "リマインドは設定されていません。",
+    "addOffsetButton": "＋ 追加",
+    "removeOffsetButton": "削除",
+    "offsetUnitDay": "日前",
+    "offsetUnitHour": "時間前",
+    "offsetUnitMinute": "分前",
+    "status": {
+      "todo": "未着手",
+      "doing": "対応中",
+      "done": "完了"
+    },
+    "statusAction": {
+      "todo": "未着手",
+      "doing": "対応中",
+      "done": "完了"
+    }
+  },
+  "calendar": {
+    "title": "カレンダー",
+    "prevMonth": "前の月",
+    "nextMonth": "次の月",
+    "legendActivity": "活動",
+    "legendTask": "タスク",
+    "legendTaskDone": "完了タスク",
+    "moreEvents": "他{count}件",
+    "noDescription": "説明はありません。",
+    "weekday": {
+      "sun": "日",
+      "mon": "月",
+      "tue": "火",
+      "wed": "水",
+      "thu": "木",
+      "fri": "金",
+      "sat": "土"
+    }
   }
 }

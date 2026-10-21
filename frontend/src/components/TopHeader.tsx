@@ -34,6 +34,20 @@ export function TopHeader() {
           >
             {t("nav.items")}
           </Link>
+          <Link
+            to="/tasks"
+            className={styles.navButton}
+            aria-current={location.pathname === "/tasks" ? "page" : undefined}
+          >
+            {t("nav.tasks")}
+          </Link>
+          <Link
+            to="/calendar"
+            className={styles.navButton}
+            aria-current={location.pathname === "/calendar" ? "page" : undefined}
+          >
+            {t("nav.calendar")}
+          </Link>
         </nav>
       </div>
       <AccountMenu />

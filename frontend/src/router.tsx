@@ -3,6 +3,7 @@ import { ActivitiesPage } from "./activities/ActivitiesPage";
 import { ActivityDetailPage } from "./activities/ActivityDetailPage";
 import { ItemSelectionPage } from "./activities/ItemSelectionPage";
 import { useAuth } from "./auth/AuthProvider";
+import { CalendarPage } from "./calendar/CalendarPage";
 import { AppLayout } from "./components/AppLayout";
 import { useI18n } from "./i18n/useI18n";
 import { ItemsPage } from "./items/ItemsPage";
@@ -12,6 +13,7 @@ import { InactivePage } from "./pages/InactivePage";
 import { LoginPage } from "./pages/LoginPage";
 import { ProfilePage } from "./pages/ProfilePage";
 import { RegisterPage } from "./pages/RegisterPage";
+import { TasksPage } from "./tasks/TasksPage";
 
 /**
  * 認証状態に応じたルーティング。状態は AuthProvider が GET /auth/me の結果
@@ -69,6 +71,8 @@ export function AppRouter() {
         <Route path="profile" element={<ProfilePage />} />
         <Route path="items" element={<ItemsPage />} />
         <Route path="activities" element={<ActivitiesPage />} />
+        <Route path="tasks" element={<TasksPage />} />
+        <Route path="calendar" element={<CalendarPage />} />
         <Route path="activities/:activityId" element={<ActivityDetailPage />} />
         <Route path="activities/:activityId/select-item" element={<ItemSelectionPage />} />
       </Route>

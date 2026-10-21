@@ -10,6 +10,8 @@
   --line: oklch(88% 0.006 260);
   --accent: oklch(50% 0.16 255);
   --accent-ink: #ffffff;
+  --accent-bg: oklch(50% 0.16 255 / 0.1);
+  --muted-bg: oklch(52% 0.01 260 / 0.08);
   --warn: oklch(58% 0.16 45);
   --warn-bg: oklch(58% 0.16 45 / 0.08);
   --positive: oklch(50% 0.11 150);
@@ -18,6 +20,7 @@
      日常的な操作(--accent)と混同しないよう別トークンにする。 */
   --cta: oklch(62% 0.19 40);
   --cta-ink: #ffffff;
+  --cta-bg: oklch(62% 0.19 40 / 0.12);
 
   --font-sans: "IBM Plex Sans JP", system-ui, -apple-system, "Hiragino Kaku Gothic ProN", "Yu Gothic",
     sans-serif;
