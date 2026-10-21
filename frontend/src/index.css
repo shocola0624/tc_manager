@@ -15,6 +15,11 @@ body {
   min-height: 100vh;
   background: var(--bg);
   color: var(--ink);
+  /* ホームの写真(HomePage.module.css の .hero)が全幅表示のために 100vw を使っており、
+     縦スクロールバーの分だけ実際の表示幅より広くなる。そのままだとページ全体がその差分だけ
+     横スクロールできてしまい、ヘッダー(100%基準)との位置ズレが見えるため、横スクロール自体を
+     起こさないようにする。 */
+  overflow-x: hidden;
 }
 
 button,
