@@ -1,0 +1,16 @@
+# `wrangler dev` でローカル実行するときの設定値の見本。
+# このファイルを .dev.vars にコピーして値を埋める(.dev.vars は .gitignore 済み)。
+# 本番(Cloudflare 上)の値は `npm run secrets:push` または `wrangler secret put` で登録する(README 参照)。
+
+# backend/.env の SPREADSHEET_ID と同じ値
+SPREADSHEET_ID=
+# サービスアカウント鍵(backend/secrets/service-account.json)の中身を1行のJSONで
+GOOGLE_SERVICE_ACCOUNT_JSON=
+# 同期先GoogleカレンダーのID。空ならカレンダー同期をスキップする
+GOOGLE_CALENDAR_ID=
+# Discord Bot トークン。開発用Botを推奨(本番チャンネルへの誤投稿防止)
+DISCORD_BOT_TOKEN=
+# タスクの visibility ごとのリマインド投稿先チャンネルID
+DISCORD_TASK_CHANNEL_ADMIN_ID=
+DISCORD_TASK_CHANNEL_OFFICER_ID=
+DISCORD_TASK_CHANNEL_MEMBER_ID=

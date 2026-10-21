@@ -1,0 +1,20 @@
+name = "tc-manager-reminders"
+main = "src/index.ts"
+compatibility_date = "2024-09-23"
+
+# 毎時0分に実行する(CLAUDE.md の元要件通り)。
+[triggers]
+crons = ["0 * * * *"]
+
+# シークレット(秘密鍵・トークン)は wrangler.toml に書かず、必ず
+# `wrangler secret put <NAME>` で登録する(README.md 参照)。開発用と本番用で
+# 環境(環境ごとの secret)を分ける場合は `wrangler secret put <NAME> --env development` のように
+# --env を使う。ここでは以下のキー名を前提にする:
+#
+#   SPREADSHEET_ID                      本番スプレッドシートのID(backend/.env と同じ値)
+#   GOOGLE_SERVICE_ACCOUNT_JSON          サービスアカウント鍵(JSON全体を1行の文字列として)
+#   GOOGLE_CALENDAR_ID                   同期先GoogleカレンダーのID(未設定ならカレンダー同期をスキップ)
+#   DISCORD_BOT_TOKEN                    Botトークン(開発用と本番用で別のBotを使うことを推奨)
+#   DISCORD_TASK_CHANNEL_ADMIN_ID        visibility=admin のリマインド投稿先チャンネルID
+#   DISCORD_TASK_CHANNEL_OFFICER_ID      visibility=officer のリマインド投稿先チャンネルID
+#   DISCORD_TASK_CHANNEL_MEMBER_ID       visibility=member のリマインド投稿先チャンネルID

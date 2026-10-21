@@ -1,0 +1,7 @@
+node_modules/
+.wrangler/
+# ローカル実行用のシークレット(wrangler dev が読む)。絶対にコミットしない
+.dev.vars
+.dev.vars.*
+.prod.vars
+!.dev.vars.example
